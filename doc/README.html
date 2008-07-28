@@ -1,0 +1,406 @@
+<html>
+<head>
+<title>rpCalc ReadMe</title>
+</head>
+<body>
+<center>
+<h1>ReadMe file for rpCalc</h1>
+<h2>a reverse polish notation calculator</h2>
+
+<p>Written by Doug Bell<br>
+Version 0.5.0<br>
+October 3, 2006</p>
+</center>
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href="#background">Background</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#legal">Legal Issues</a></li>
+<li><a href="#sysreq">System Requirements</a>
+  <ul><li><a href="#linux-sys">Linux</a></li>
+  <li><a href="#win-sys">Windows</a></li></ul></li>
+<li><a href="#install">Installation</a>
+  <ul><li><a href="#linux-inst">Linux</a></li>
+  <li><a href="#win-inst">Windows</a></li></ul></li>
+<li><a href="#using">Using rpCalc</a>
+  <ul><li><a href="#basics">Basics</a></li>
+  <li><a href="#info-win">Information Windows</a></li>
+  <li><a href="#option">Options</a></li></ul></li>
+<li><a href="#revs">Revision History</a></li>
+<li><a href="#contact">Questions, Comments, Criticisms?</a></li>
+</ul>
+
+<h2><a name="background"></a>Background</h2>
+
+<p>rpCalc started out as a small program written to try out various
+Python GUI toolkits.  But I ended up using it all the time (it's much
+quicker to pull it up than to pull an actual HP calculator out of the
+desk), and I made several improvements.  So I decided to make it
+available to others who also like RPN calculators.</p>
+
+<p>Since I'm not in the software business, I'm making this program
+free for anyone to use, distribute and modify, as long as it is not
+incorporated into any proprietary programs.  If you like the software,
+feel free to let others know about it.  And let me know what you think
+- my e-mail address is doug101 AT bellz DOT org</p>
+
+<h2><a name="features"></a>Features</h2>
+
+<ul>
+
+  <li>Uses reverse polish notation, similar to most Hewlett-Packard
+  calculators.</li>
+
+  <li>The number, operator or command text on any key can be typed, or
+  the mouse can be used to hit the key.</li>
+
+  <li>If desired, the four RPN registers can be shown in the main
+  display.</li>
+
+  <li>A separate window can display the four RPN registers, a history of
+  recent calculations, or the contents of the ten memory registers.</li>
+
+  <li>Any values from the extra windows can be copied to the calculator
+  display or to the clipboard.</li>
+
+  <li>Options can be set to control the display of numbers and the
+  initial window configuration.</li>
+
+</ul>
+
+<h2><a name="legal"></a>Legal Issues</h2>
+
+<p>rpCalc is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either Version 2 of the License, or (at your
+option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY.  See the <tt>LICENSE</tt> file provided with
+this program for more information.</p>
+
+<h2><a name="sysreq"></a>System Requirements</h2>
+
+<h3><a name="linux-sys"></a>Linux</h3>
+
+<p>rpCalc requires the following libraries:
+<ul>
+  <li>Qt (Version 4.1 or higher - see <a
+    href="http://www.trolltech.com">Trolltech</a> for more information)</li>
+  <li>Python (Version 2.3 or higher)</li>
+  <li>PyQt (Version 4.0 or higher - see <a
+    href="http://www.riverbankcomputing.co.uk">Riverbank</a>
+    for more information)</li>
+</ul></p>
+
+<p>These libraries are relatively new - packages may not be available
+for your distribution.  In that case, an earlier version of rpCalc
+(0.4.3) that depends on older libraries is still available.</p>
+
+<h3><a name="win-sys"></a>Windows</h3>
+
+<p>Using the files provided in the binary distribution, rpCalc should
+run on any computer running Win 95, 98, NT, 2000, or XP.</p>
+
+<h2><a name="install"></a>Installation</h2>
+
+<h3><a name="linux-inst"></a>Linux</h3>
+
+<p>Extract the source files from the rpcalc tar file, then change to the
+<tt>rpCalc</tt> directory in a terminal.  For a basic installation,
+simply execute the following command as root:  <tt>python
+  install.py</tt></p>
+
+<p>To see all install options, use: <tt>python install.py -h</tt></p>
+
+<p>To install rpCalc with a different prefix (the default is
+<tt>/usr/local</tt>), use:  <tt>python install.py -p
+  /prefix/path</tt></p>
+
+<h3><a name="win-inst"></a>Windows</h3>
+
+<p>Simply execute the downloaded installation file
+(<tt>rpcalc-x.x.x-install.exe</tt>).  It will install the program
+with its libraries and optionally create shortcuts.</p>
+
+<p>If you wish to modify the source code or write your own PyQt programs
+for Windows, do not use the above procedure.  Instead, you need to
+install <a href="http://www.python.org">Python</a>, <a
+  href="http://www.trolltech.com">Qt</a>, and <a
+  href="http://www.riverbankcomputing.co.uk">PyQt</a>.  Then extract the
+source code and data files from the Linux version (rpcalc tar file) to a
+directory of your choice and execute the <tt>rpcalc.py</tt> file.</p>
+
+<h2><a name="using"></a>Using rpCalc</h2>
+
+<h3><a name="basics"></a>Basics</h3>
+
+<p>If you know how to use an RPN calculator (like Hewlett-Packard
+models), you know how to use rpCalc.  It stores previous results in
+four registers (usually labeled X, Y, Z and T), and the numbers are
+entered before the operators.</p>
+
+<p>The quickest way to enter numbers and the four basic operators is to
+use the number pad on the keyboard.  For the other keys, the name on the
+key can be typed (not case-sensitive).  What has been typed shows up in
+the box below the keys.  The tab key may be used to automatically
+complete a partially typed command.  Of course, the mouse may also be
+used to hit any key.</p>
+
+<p>A few keys have unusual labels to allow them to be typed:  "RCIP"
+is 1/X, "tn^X" is 10^X, "R&lt;" rolls the stack back (or down),
+"R&gt;" rolls the stack forward (or up), "x&lt;&gt;y" is exchange,
+"CLR" clears the registers, and "&lt;-" is backspace.</p>
+
+<p>A few commands ("STO", "RCL" and "PLCS") prompt for a number from
+zero through nine.  This number will be the memory register number or
+the number of decimal places for the display.</p>
+
+<h3><a name="info-win"></a>Information Windows</h3>
+
+<p>A menu can be displayed by hitting the Esc key or by clicking on the
+main number (LCD) display with the right mouse button.  This menu has
+commands to display a list of registers, a calculation history list, and
+a memory contents list.  These commands will create a new window with
+the requested information.  The extra window is tabbed to toggle between
+the three lists.  Buttons on the window can be used to copy the numbers
+to the calculator (X-register) or to the clipboard (with buttons to copy
+either all decimal places or the formatted fixed decimal place number).
+The register list shows the register contents to full precision, with
+all available decimal places shown.</p>
+
+<h3><a name="option"></a>Options</h3>
+
+<p>The OPT key will show an options dialog box.  This includes settings
+for showing the extra data window at startup, for display parameters and
+for angular unit selection.  This box also has a button that, like the
+menu mentioned above, will show the extra data window with the register,
+history and memory information.  In addition, the view registers option
+will show the contents of all four RPN registers on the main display.
+Note that the display parameters and the angle unit can also be changed
+using dedicated keys.</p> 
+
+<h2><a name="revs"></a>Revision History</h2>
+
+<h3>October 3, 2006 - Release 0.5.0</h3>
+
+<ul><b>New features:</b>
+
+  <li>rpCalc was ported to the Qt4 library. This involved a significant
+  rewrite of the code.  The previous versions used Qt3.x on Linux and
+  Qt2.3 on Windows.  Benefits include updated widgets and removal of the
+  non-commercial license exception in Windows.</li>
+
+</ul>
+
+<ul><b>Updates:</b>
+
+  <li>On Windows, the rpCalc.ini file has been moved from the
+  installation directory to a location under the "Documents and
+  Settings" folder.  This avoids problems on multi-user systems and for
+  users with limited access rights.</li>
+
+</ul>
+
+<h3>March 12, 2004 - Release 0.4.3</h3>
+
+<ul><b>New features:</b>
+
+  <li>The size and position of the main and extra windows are now saved
+  at exit.</li>
+
+  <li>An install program has been added for windows.</li>
+
+</ul>
+
+<ul><b>Bug Fixes:</b>
+
+  <li>Fixed Linux install script problems with certain versions of
+  Python.</li>
+
+</ul>
+
+<h3>November 17, 2003 - Release 0.4.2</h3>
+
+<ul><b>New Features:</b>
+
+  <li>Allow the use of commas in addition to periods as decimal points
+  to accomodate European keyboards.</li>
+
+</ul>
+
+<ul><b>Updates:</b>
+
+  <li>An install script was added for Linux and Unix systems.</li>
+
+  <li>The windows build now uses Python version 2.3 and PyQt version
+  3.8.</li>
+
+</ul>
+
+<h3>July 14, 2003 - Release 0.4.1</h3>
+
+<ul><b>New Features:</b>
+
+  <li>Added option to remove the LCD display highlight.  This is useful
+  for smaller displays</li>
+
+</ul>
+
+<ul><b>Bug Fixes:</b>
+
+  <li>Fixed a problem with the option to display the extra data view
+  on startup.</li>
+  
+</ul>
+
+<h3>April 30, 2003 - Release 0.4.0</h3>
+
+<ul><b>New Features:</b>
+
+  <li>The main display can optionally be expanded to show lines for the
+  Y, Z, &amp; T registers.</li>
+
+  <li>The three separate views for extra data (registers, history &amp;
+  memory) have been replaced with a single tabbed view.</li>
+
+</ul>
+
+<ul><b>Updates:</b>
+
+  <li>Icon files are now provided with the distributed files.</li>
+
+</ul>
+
+<ul><b>Bug Fixes:</b>
+
+  <li>Crashes caused by some calculation overflows have been fixed.</li>
+
+</ul>
+
+<h3>February 27, 2003 - Release 0.3.0</h3>
+
+<ul><b>New Features:</b>
+
+  <li>The typing of multiple-letter command names has been made easier.
+  The return key is no longer needed to finish a command, and hitting
+  the tab key auto-completes a partial command.</li>
+
+  <li>Since it is no longer needed for entering commands, the return key
+  is now equivalent to the enter key.</li>
+
+  <li>New keys have been added for setting display and angle options.
+  "PLCS" prompts for the number of decimal places, "SCI" toggles between
+  fixed and scientific display, and "DEG" toggles between degree and
+  radian settings.  There is also a new status indicator in the lower
+  right corner for these options.</li>
+
+  <li>A new "SHOW" key temporarily toggles to a scientific display
+  showing 12 significant figures.  The display goes back to normal after
+  the next command or if the "SHOW" command is repeated.</li>
+
+</ul>
+
+<h3>May 28, 2002 - Release 0.2.2a</h3>
+
+<ul><b>Bug Fixes:</b>
+
+  <li>A fix of the Windows binary only.  Fixes major problems by
+  upgrading the library version to PyQt 3.2.4.</li>
+
+</ul>
+
+<h3>May 16, 2002 - Release 0.2.2</h3>
+
+<ul><b>Updates:</b>
+
+  <li>rpCalc has been ported to Qt 3.x.  It now works with both Qt
+  2.x and 3.x using the same source code.</li>
+
+  <li>The help/readme file has been rewritten and now includes section
+  links.</li>
+
+  <li>The binaries for windows have been updated to Python 2.2 and PyQt
+  3.2 (but are still using Qt 2.3 Non-commercial).</li>
+
+</ul>
+
+<h3>September 8, 2001 - Release 0.2.1</h3>
+
+<ul><b>Bug Fixes:</b>
+
+  <li>Fixed a problem with extra views not always updating
+  properly.</li>
+
+  <li>Fixed copying to the clipboard from the history view.</li>
+
+</ul>
+
+<h3>August 30, 2001 - Release 0.2.0</h3>
+
+<ul><b>New features:</b>
+
+  <li>Extra views listing registers, calculation history and memory
+  values were added.</li>
+
+  <li>A popup menu was added to the display.</li>
+
+</ul>
+
+<ul><b>Updates:</b>
+
+  <li>Improved error handling.</li>
+
+</ul>
+
+<h3>August 20, 2001 - Release 0.1.2</h3>
+
+<ul><b>Updates:</b>
+
+  <li>The name was changed to rpCalc to avoid conflicts.</li>
+
+  <li>For MS Windows users, the binary files were upgraded to PyQt
+  Version 2.5.</li>
+
+</ul>
+
+<ul><b>Bug Fixes:</b>
+
+  <li>Problems with saving changed options were fixed.</li>
+
+</ul>
+
+<h3>August 10, 2001 - Release 0.1.1</h3>
+
+<ul><b>New features:</b>
+
+  <li>Added a button to the OPT dialog to view the ReadMe file.</li>
+
+</ul>
+
+<ul><b>Updates:</b>
+
+  <li>The rpcalc.ini file on windows was moved to the program
+  directory.</li>
+
+</ul>
+
+<h3>July 2, 2001 - Release 0.1.0</h3>
+
+<ul>
+
+  <p>Initial release.</p>
+
+</ul>
+
+<h2><a name="contact"></a>Questions, Comments, Criticisms?</h2>
+
+<p>I can be contacted by email at: doug101 AT bellz DOT org<br> I
+welcome any feedback, including reports of any bugs you find.  Also, you
+can periodically check back to <a
+  href="http://www.bellz.org">www.bellz.org</a> for any updates.</p>
+
+</body>
+</html>
