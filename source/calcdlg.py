@@ -195,8 +195,14 @@ class CalcDlg(QtGui.QWidget):
         self.optDlg.startGroupBox('Display')
         optiondlg.OptionDlgInt(self.optDlg, 'NumDecimalPlaces',
                                'Number of decimal places', 0, 9)
+        optiondlg.OptionDlgBool(self.optDlg, 'ThousandsSeparator',
+                                'Separate thousands with spaces')
         optiondlg.OptionDlgBool(self.optDlg, 'ForceSciNotation',
-                                'Scientific notation only')
+                                'Always show exponent')
+        optiondlg.OptionDlgBool(self.optDlg, 'UseEngNotation',
+                                'Use engineering notation')
+        optiondlg.OptionDlgBool(self.optDlg, 'TrimExponents',
+                                'Hide exponent leading zeros')
         optiondlg.OptionDlgBool(self.optDlg, 'HideLcdHighlight',
                                 'Hide LCD highlight')
         self.optDlg.endGroupBox()
@@ -351,6 +357,9 @@ class CalcDlg(QtGui.QWidget):
     def updateLcd(self):
         """Sets display back to CalcCore string"""
         numDigits = int(self.calc.option.numData('NumDecimalPlaces', 0, 9)) + 9
+        if self.calc.option.boolData('ThousandsSeparator') or \
+                self.calc.option.boolData('UseEngNotation'):
+            numDigits += 2
         self.lcd.setDisplay(self.calc.xStr, numDigits)
         if self.calc.option.boolData('ViewRegisters'):
             nums = [self.calc.formatNum(num) for num in self.calc.stack[1:]]

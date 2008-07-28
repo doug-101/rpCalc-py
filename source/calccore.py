@@ -79,10 +79,45 @@ class CalcCore(object):
         """Return number formatted per options"""
         absNum = abs(num)
         plcs = self.option.intData('NumDecimalPlaces', 0, 9)
-        if (1e-4 <= absNum < 1e7 or absNum == 0) and not \
-                 self.option.boolData('ForceSciNotation'):
-            return ('% 0.' + repr(plcs) + 'f') % num
-        return ('% 0.' + repr(plcs) + 'e') % num
+        forceSci = self.option.boolData('ForceSciNotation')
+        useEng = self.option.boolData('UseEngNotation')
+        exp = 0
+        if absNum != 0.0 and (absNum < 1e-4 or absNum >= 1e7 or forceSci
+                              or useEng):
+            exp = int(math.floor(math.log10(absNum)))
+            if useEng:
+                exp = 3 * int(math.floor(exp / 3.0))
+            num /= 10**exp
+            num = round(num, plcs)  # check if rounding bumps exponent
+            if useEng and abs(num) >= 1000.0:
+                num /= 1000.0
+                exp += 3
+            elif not useEng and abs(num) >= 10:
+                num /= 10.0
+                exp += 1
+        numStr = '% 0.*f' % (plcs, num)
+        if self.option.boolData('ThousandsSeparator'):
+            numStr = self.addThousandsSep(numStr)
+        if exp != 0 or forceSci:
+            expDigits = 4
+            if self.option.boolData('TrimExponents'):
+                expDigits = 1
+            numStr = '%se%+0*d' % (numStr, expDigits, exp)
+        return numStr
+
+    def addThousandsSep(self, numStr):
+        """Return number string with thousands separators added"""
+        leadChar = ''
+        if numStr[0] < '0' or numStr[0] > '9':
+            leadChar = numStr[0]
+            numStr = numStr[1:]
+        numStr = numStr.replace(' ', '')
+        decPos = numStr.find('.')
+        if decPos < 0:
+            decPos = len(numStr)
+        for i in range(decPos - 3, 0, -3):
+            numStr = numStr[:i] + ' ' + numStr[i:]
+        return leadChar + numStr
 
     def sciFormatX(self, decPlcs):
         """Return X register str in sci notation"""
@@ -100,12 +135,14 @@ class CalcCore(object):
         newStr = ' ' + entStr    # space for minus sign
         if self.flag in (Mode.entryMode, Mode.expMode):
             newStr = self.xStr + entStr
+            if self.option.boolData('ThousandsSeparator'):
+                newStr = self.addThousandsSep(newStr)
         elif self.flag == Mode.saveMode:
             self.stack.enterX()
         if newStr == ' .':
             newStr = ' 0.'
         try:
-            num = float(newStr)
+            num = float(newStr.replace(' ', ''))
         except ValueError:
             return False
         self.stack[0] = num
