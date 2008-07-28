@@ -4,7 +4,7 @@
 # calcdlg.py, the main dialog view
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2006, Douglas W. Bell
+# Copyright (C) 2008, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -24,6 +24,7 @@ from calccore import CalcCore, Mode
 from calclcd import Lcd, LcdBox
 from calcbutton import CalcButton
 import extradisplay
+import altbasedialog
 import optiondlg
 import icons
 import helpview
@@ -43,6 +44,7 @@ class CalcDlg(QtGui.QWidget):
         self.regView = None
         self.histView = None
         self.memView = None
+        self.altBaseView = None
         self.optDlg = None
         self.popupMenu = QtGui.QMenu(self)
         self.popupMenu.addAction('Registers on &LCD', self.toggleReg)
@@ -50,6 +52,8 @@ class CalcDlg(QtGui.QWidget):
         self.popupMenu.addAction('Show &Register List', self.viewReg)
         self.popupMenu.addAction('Show &History List', self.viewHist)
         self.popupMenu.addAction('Show &Memory List', self.viewMem)
+        self.popupMenu.addSeparator()
+        self.popupMenu.addAction('Show &Other Bases', self.viewAltBases)
         self.popupMenu.addSeparator()
         self.popupMenu.addAction('Show ReadMe &File', self.help)
         self.popupMenu.addAction('&About rpCalc', self.about)
@@ -205,13 +209,15 @@ class CalcDlg(QtGui.QWidget):
                                 'Hide exponent leading zeros')
         optiondlg.OptionDlgBool(self.optDlg, 'HideLcdHighlight',
                                 'Hide LCD highlight')
-        self.optDlg.endGroupBox()
+        self.optDlg.startNewColumn()
         optiondlg.OptionDlgRadio(self.optDlg, 'AngleUnit', 'Angular Units',
                                  [('deg', 'Degrees'), ('rad', 'Radians')])
         self.optDlg.startGroupBox('Extra Views')
         optiondlg.OptionDlgBool(self.optDlg, 'ViewRegisters',
                                 'View Registers on LCD')
         optiondlg.OptionDlgPush(self.optDlg, 'View Extra Data', self.viewExtra)
+        optiondlg.OptionDlgPush(self.optDlg, 'View Other Bases',
+                                self.viewAltBases)
         optiondlg.OptionDlgPush(self.optDlg, 'View ReadMe file', self.help)
         optiondlg.OptionDlgInt(self.optDlg, 'MaxHistLength',
                                'Saved history steps', CalcCore.minMaxHist,
@@ -284,9 +290,11 @@ class CalcDlg(QtGui.QWidget):
         self.viewExtra(2)
 
     def updateExtra(self):
-        """Update current extra view"""
+        """Update current extra and alt base views"""
         if self.extraView and self.extraView.isVisible():
             self.extraView.updateData()
+        if self.altBaseView and self.altBaseView.isVisible():
+            self.altBaseView.updateData()
 
     def toggleReg(self):
         """Toggle register display on LCD"""
@@ -301,6 +309,15 @@ class CalcDlg(QtGui.QWidget):
                 w.hide()
         self.adjustSize()
         self.calc.updateXStr()
+
+    def viewAltBases(self):
+        """Show alternate base view"""
+        if self.optDlg:
+            self.optDlg.reject()   # unfortunately necessary?
+        if not self.altBaseView:
+            self.altBaseView = altbasedialog.AltBaseDialog(self)
+        self.altBaseView.updateData()
+        self.altBaseView.show()
 
     def findHelpFile(self):
         """Return the path to the help file"""
