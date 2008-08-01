@@ -27,17 +27,30 @@ class AltBaseDialog(QtGui.QWidget):
         self.setLayout(topLay)
         mainLay = QtGui.QGridLayout()
         topLay.addLayout(mainLay)
-        mainLay.addWidget(QtGui.QLabel('Hex'), 0, 0,
-                          QtCore.Qt.AlignRight)
+        self.buttons = QtGui.QButtonGroup(self)
         self.editBoxes = []
+        hexButton = QtGui.QPushButton('Hex')
+        self.buttons.addButton(hexButton, 16)
+        mainLay.addWidget(hexButton, 0, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(16))
         mainLay.addWidget(self.editBoxes[-1], 0, 1)
-        mainLay.addWidget(QtGui.QLabel('Octal'), 1, 0, QtCore.Qt.AlignRight)
+        octalButton = QtGui.QPushButton('Octal')
+        self.buttons.addButton(octalButton, 8)
+        mainLay.addWidget(octalButton, 1, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(8))
         mainLay.addWidget(self.editBoxes[-1], 1, 1)
-        mainLay.addWidget(QtGui.QLabel('Binary'), 2, 0, QtCore.Qt.AlignRight)
+        binaryButton = QtGui.QPushButton('Binary')
+        self.buttons.addButton(binaryButton, 2)
+        mainLay.addWidget(binaryButton, 2, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(2))
         mainLay.addWidget(self.editBoxes[-1], 2, 1)
+        decimalButton = QtGui.QPushButton('Decimal')
+        self.buttons.addButton(decimalButton, 10)
+        mainLay.addWidget(decimalButton, 3, 0, QtCore.Qt.AlignRight)
+        self.editBoxes.append(AltBaseEdit(10))
+        mainLay.addWidget(self.editBoxes[-1], 3, 1)
+        for button in self.buttons.buttons():
+            button.setCheckable(True)
         closeButton = QtGui.QPushButton('Close')
         topLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
@@ -48,11 +61,15 @@ class AltBaseDialog(QtGui.QWidget):
             box.setValue(self.dlgRef.calc.stack[0])
 
 
-class AltBaseEdit(QtGui.QLineEdit):
+class AltBaseEdit(QtGui.QLabel):
     """Displays an edit box at a particular base"""
     def __init__(self, base, parent=None):
-        QtGui.QLineEdit.__init__(self, parent)
+        QtGui.QLabel.__init__(self, parent)
         self.base = base
+        self.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken)
+        self.setLineWidth(3)
+        self.setSizePolicy(QtGui.QSizePolicy.Expanding,
+                           QtGui.QSizePolicy.Minimum)
 
     def setValue(self, num):
         """Set value to num in proper base"""
