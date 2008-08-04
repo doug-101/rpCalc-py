@@ -23,6 +23,7 @@ class AltBaseDialog(QtGui.QWidget):
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Alternate Bases')
         self.setWindowIcon(icons.iconDict['calc'])
+        self.base = 10
         topLay = QtGui.QVBoxLayout(self)
         self.setLayout(topLay)
         mainLay = QtGui.QGridLayout()
@@ -51,6 +52,9 @@ class AltBaseDialog(QtGui.QWidget):
         mainLay.addWidget(self.editBoxes[-1], 3, 1)
         for button in self.buttons.buttons():
             button.setCheckable(True)
+        self.buttons.button(self.base).setChecked(True)
+        self.connect(self.buttons, QtCore.SIGNAL('buttonClicked(int)'),
+                     self.changeBase)
         closeButton = QtGui.QPushButton('Close')
         topLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
@@ -59,6 +63,16 @@ class AltBaseDialog(QtGui.QWidget):
         """Update edit box contents for current registers"""
         for box in self.editBoxes:
             box.setValue(self.dlgRef.calc.stack[0])
+
+    def changeBase(self, base):
+        """Change base based on button click"""
+        self.base = base
+
+    def convertNumber(self, num):
+        """Convert number to the current base"""
+        if self.base != 10:
+            num = int(num, self.base)
+        return num
 
 
 class AltBaseEdit(QtGui.QLabel):
