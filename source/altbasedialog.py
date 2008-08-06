@@ -13,17 +13,17 @@
 #*****************************************************************************
 
 from PyQt4 import QtCore, QtGui
+import calccore
 import icons
 
 class AltBaseDialog(QtGui.QWidget):
     """Displays edit boxes for other number bases"""
-    def __init__(self, dlgRef, parent=None):
+    def __init__(self, coreRef, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        self.dlgRef = dlgRef
+        self.coreRef = coreRef
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Alternate Bases')
         self.setWindowIcon(icons.iconDict['calc'])
-        self.base = 10
         topLay = QtGui.QVBoxLayout(self)
         self.setLayout(topLay)
         mainLay = QtGui.QGridLayout()
@@ -52,7 +52,7 @@ class AltBaseDialog(QtGui.QWidget):
         mainLay.addWidget(self.editBoxes[-1], 3, 1)
         for button in self.buttons.buttons():
             button.setCheckable(True)
-        self.buttons.button(self.base).setChecked(True)
+        self.buttons.button(self.coreRef.base).setChecked(True)
         self.connect(self.buttons, QtCore.SIGNAL('buttonClicked(int)'),
                      self.changeBase)
         closeButton = QtGui.QPushButton('Close')
@@ -62,17 +62,17 @@ class AltBaseDialog(QtGui.QWidget):
     def updateData(self):
         """Update edit box contents for current registers"""
         for box in self.editBoxes:
-            box.setValue(self.dlgRef.calc.stack[0])
+            box.setValue(self.coreRef.stack[0])
 
     def changeBase(self, base):
         """Change base based on button click"""
-        self.base = base
+        self.coreRef.base = base
 
-    def convertNumber(self, num):
-        """Convert number to the current base"""
-        if self.base != 10:
-            num = int(num, self.base)
-        return num
+    # def convertNumber(self, num):
+        # """Convert number to the current base"""
+        # if self.base != 10:
+            # num = int(num, self.base)
+        # return num
 
 
 class AltBaseEdit(QtGui.QLabel):
@@ -87,19 +87,4 @@ class AltBaseEdit(QtGui.QLabel):
 
     def setValue(self, num):
         """Set value to num in proper base"""
-        self.setText(numberStr(num, self.base))
-
-
-def numberStr(number, base):
-    """Return string of number in given base (2-16)"""
-    digits = '0123456789abcdef'
-    number = int(round(number))
-    result = ''
-    sign = ''
-    if number < 0:
-        number = abs(number)
-        sign = '-'
-    while number:
-        number, remainder = divmod(number, base)
-        result = '%s%s' % (digits[remainder], result)
-    return '%s%s' % (sign, result)
+        self.setText(calccore.numberStr(num, self.base))

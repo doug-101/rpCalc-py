@@ -315,7 +315,7 @@ class CalcDlg(QtGui.QWidget):
         if self.optDlg:
             self.optDlg.reject()   # unfortunately necessary?
         if not self.altBaseView:
-            self.altBaseView = altbasedialog.AltBaseDialog(self)
+            self.altBaseView = altbasedialog.AltBaseDialog(self.calc)
         self.altBaseView.updateData()
         self.altBaseView.show()
 

@@ -41,6 +41,7 @@ class CalcCore(object):
         self.xStr = ''
         self.updateXStr()
         self.flag = Mode.saveMode
+        self.base = 10
         self.history = []
         self.histChg = 0
 
@@ -135,17 +136,20 @@ class CalcCore(object):
         newStr = ' ' + entStr    # space for minus sign
         if self.flag in (Mode.entryMode, Mode.expMode):
             newStr = self.xStr + entStr
-            if self.option.boolData('ThousandsSeparator'):
-                newStr = self.addThousandsSep(newStr)
         elif self.flag == Mode.saveMode:
             self.stack.enterX()
         if newStr == ' .':
             newStr = ' 0.'
         try:
-            num = float(newStr.replace(' ', ''))
+            if self.base == 10:
+                num = float(newStr.replace(' ', ''))
+            else:
+                num = float(int(newStr.replace(' ', ''), self.base))
         except ValueError:
             return False
         self.stack[0] = num
+        if self.option.boolData('ThousandsSeparator'):
+            newStr = self.addThousandsSep(newStr)
         self.xStr = newStr
         if self.flag != Mode.expMode:
             self.flag = Mode.entryMode
@@ -181,7 +185,9 @@ class CalcCore(object):
             self.updateXStr()
             self.flag = Mode.replMode
             return True
-        self.stack[0] = float(self.xStr)
+        self.stack[0] = float(self.xStr.replace(' ', ''))
+        if self.option.boolData('ThousandsSeparator'):
+            self.xStr = self.addThousandsSep(self.xStr)
         return True
 
     def chsCmd(self):
@@ -197,7 +203,7 @@ class CalcCore(object):
                 self.xStr = '-' + self.xStr[1:]
             else:
                 self.xStr = ' ' + self.xStr[1:]
-        self.stack[0] = float(self.xStr)
+        self.stack[0] = float(self.xStr.replace(' ', ''))
         return True
 
     def memStoRcl(self, numStr):
@@ -372,6 +378,21 @@ class CalcCore(object):
         """Print display string and all registers for debug"""
         print 'x =', self.xStr
         print '\n'.join([repr(num) for num in self.stack])
+
+
+def numberStr(number, base):
+    """Return string of number in given base (2-16)"""
+    digits = '0123456789abcdef'
+    number = int(round(number))
+    result = ''
+    sign = ''
+    if number < 0:
+        number = abs(number)
+        sign = '-'
+    while number:
+        number, remainder = divmod(number, base)
+        result = '%s%s' % (digits[remainder], result)
+    return '%s%s' % (sign, result)
 
 
 if __name__ == '__main__':
