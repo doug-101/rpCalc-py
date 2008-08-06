@@ -447,7 +447,7 @@ class CalcDlg(QtGui.QWidget):
         button = self.mainDict.get(keyEvent.key())
         if not self.entryStr and button:
             button.clickEvent()
-            button.setDown(1)
+            button.setDown(True)
         elif not self.entryStr and keyEvent.key() == QtCore.Qt.Key_Backspace:
             button = self.cmdDict['<-']
             button.clickEvent()
@@ -461,7 +461,7 @@ class CalcDlg(QtGui.QWidget):
         """Event handler for keys - sets button back to raised position"""
         button = self.mainDict.get(keyEvent.key())
         if not self.entryStr and button:
-            button.setDown(0)
+            button.setDown(False)
 
     def closeEvent(self, event):
         """Saves the stack prior to closing"""

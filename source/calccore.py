@@ -54,7 +54,6 @@ class CalcCore(object):
                         range(10)]
         else:
             self.mem = [0.0] * 10
-        self.memChg = 0
 
     def saveStack(self):
         """Store stack to option file"""
@@ -133,18 +132,23 @@ class CalcCore(object):
         
     def numEntry(self, entStr):
         """Interpret a digit entered depending on mode"""
-        newStr = ' ' + entStr    # space for minus sign
-        if self.flag in (Mode.entryMode, Mode.expMode):
-            newStr = self.xStr + entStr
-        elif self.flag == Mode.saveMode:
+        if self.flag == Mode.saveMode:
             self.stack.enterX()
-        if newStr == ' .':
-            newStr = ' 0.'
+        if self.flag in (Mode.entryMode, Mode.expMode):
+            if self.base == 10:
+                newStr = self.xStr + entStr
+            else:
+                newStr = numberStr(self.stack[0],self.base) + entStr
+        else:
+            newStr = ' ' + entStr    # space for minus sign
+            if newStr == ' .':
+                newStr = ' 0.'
         try:
             if self.base == 10:
                 num = float(newStr.replace(' ', ''))
             else:
                 num = float(int(newStr.replace(' ', ''), self.base))
+                newStr = self.formatNum(num)  # decimal num in main display
         except ValueError:
             return False
         self.stack[0] = num
@@ -212,7 +216,6 @@ class CalcCore(object):
             num = int(numStr)
             if self.flag == Mode.memStoMode:
                 self.mem[num] = self.stack[0]
-                self.memChg = 1
             elif self.flag == Mode.memRclMode:
                 self.stack.enterX()
                 self.stack[0] = self.mem[num]
