@@ -488,5 +488,10 @@ class CalcDlg(QtGui.QWidget):
                                         self.extraView.x(), True)
             self.calc.option.changeData('ExtraViewYPos',
                                         self.extraView.y(), True)
+        if self.altBaseView:
+            self.calc.option.changeData('AltBaseXPos',
+                                        self.altBaseView.x(), True)
+            self.calc.option.changeData('AltBaseYPos',
+                                        self.altBaseView.y(), True)
         self.calc.option.writeChanges()
         QtGui.QWidget.closeEvent(self, event)

@@ -60,6 +60,9 @@ class AltBaseDialog(QtGui.QWidget):
         closeButton = QtGui.QPushButton('&Close')
         topLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
+        option = self.dlgRef.calc.option
+        self.move(option.intData('AltBaseXPos', 0, 10000),
+                  option.intData('AltBaseYPos', 0, 10000))
 
     def updateData(self):
         """Update edit box contents for current registers"""

@@ -62,4 +62,6 @@ defaultList = [\
     "ExtraViewXSize      0",
     "ExtraViewYSize      0",
     "ExtraViewXPos       0",
-    "ExtraViewYPos       0"]
+    "ExtraViewYPos       0",
+    "AltBaseXPos         0",
+    "AltBaseYPos         0"]
