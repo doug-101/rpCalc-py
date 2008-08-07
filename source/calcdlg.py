@@ -448,6 +448,9 @@ class CalcDlg(QtGui.QWidget):
         if not self.entryStr and button:
             button.clickEvent()
             button.setDown(True)
+        elif not self.entryStr and self.calc.base == 16 and \
+                 'A' <= str(keyEvent.text()).upper() <= 'F':
+            self.issueCmd(keyEvent.text())
         elif not self.entryStr and keyEvent.key() == QtCore.Qt.Key_Backspace:
             button = self.cmdDict['<-']
             button.clickEvent()

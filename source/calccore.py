@@ -252,6 +252,8 @@ class CalcCore(object):
             if len(cmdStr) == 1:
                 if '0' <= cmdStr <= '9' or cmdStr == '.':
                     return self.numEntry(cmdStr)
+                if self.base == 16 and 'A' <= cmdStr <= 'F':
+                    return self.numEntry(cmdStr)
                 if cmdStr in '+-*/':
                     eqn = '%s %s %s' % (self.formatNum(self.stack[1]), cmdStr,
                                         self.formatNum(self.stack[0]))
