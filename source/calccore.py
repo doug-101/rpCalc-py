@@ -394,6 +394,8 @@ def numberStr(number, base):
     if number < 0:
         number = abs(number)
         sign = '-'
+    if number == 0:
+        return '0'
     while number:
         number, remainder = divmod(number, base)
         result = '%s%s' % (digits[remainder], result)

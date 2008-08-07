@@ -293,7 +293,7 @@ class CalcDlg(QtGui.QWidget):
         """Update current extra and alt base views"""
         if self.extraView and self.extraView.isVisible():
             self.extraView.updateData()
-        if self.altBaseView and self.altBaseView.isVisible():
+        if self.altBaseView:
             self.altBaseView.updateData()
 
     def toggleReg(self):
@@ -315,7 +315,7 @@ class CalcDlg(QtGui.QWidget):
         if self.optDlg:
             self.optDlg.reject()   # unfortunately necessary?
         if not self.altBaseView:
-            self.altBaseView = altbasedialog.AltBaseDialog(self.calc)
+            self.altBaseView = altbasedialog.AltBaseDialog(self)
         self.altBaseView.updateData()
         self.altBaseView.show()
 
@@ -448,9 +448,15 @@ class CalcDlg(QtGui.QWidget):
         if not self.entryStr and button:
             button.clickEvent()
             button.setDown(True)
-        elif not self.entryStr and self.calc.base == 16 and \
-                 'A' <= str(keyEvent.text()).upper() <= 'F':
+            return
+        letter = str(keyEvent.text()).upper()
+        if not self.entryStr and self.calc.base == 16 and \
+                 'A' <= letter <= 'F':
             self.issueCmd(keyEvent.text())
+        elif self.altBaseView and self.altBaseView.isVisible() and \
+                self.calc.xStr == ' 0' and self.calc.flag == Mode.entryMode \
+                and letter in ('X', 'O', 'B', 'D'):
+            self.altBaseView.setTempBase(letter)
         elif not self.entryStr and keyEvent.key() == QtCore.Qt.Key_Backspace:
             button = self.cmdDict['<-']
             button.clickEvent()

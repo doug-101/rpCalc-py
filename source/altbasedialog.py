@@ -18,9 +18,11 @@ import icons
 
 class AltBaseDialog(QtGui.QWidget):
     """Displays edit boxes for other number bases"""
-    def __init__(self, coreRef, parent=None):
+    baseCode = {'X':16, 'O':8, 'B':2, 'D':10}
+    def __init__(self, dlgRef, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        self.coreRef = coreRef
+        self.dlgRef = dlgRef
+        self.tempBase = False
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Alternate Bases')
         self.setWindowIcon(icons.iconDict['calc'])
@@ -30,49 +32,70 @@ class AltBaseDialog(QtGui.QWidget):
         topLay.addLayout(mainLay)
         self.buttons = QtGui.QButtonGroup(self)
         self.editBoxes = []
-        hexButton = QtGui.QPushButton('Hex')
+        hexButton = QtGui.QPushButton('&Hex')
         self.buttons.addButton(hexButton, 16)
         mainLay.addWidget(hexButton, 0, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(16))
         mainLay.addWidget(self.editBoxes[-1], 0, 1)
-        octalButton = QtGui.QPushButton('Octal')
+        octalButton = QtGui.QPushButton('&Octal')
         self.buttons.addButton(octalButton, 8)
         mainLay.addWidget(octalButton, 1, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(8))
         mainLay.addWidget(self.editBoxes[-1], 1, 1)
-        binaryButton = QtGui.QPushButton('Binary')
+        binaryButton = QtGui.QPushButton('&Binary')
         self.buttons.addButton(binaryButton, 2)
         mainLay.addWidget(binaryButton, 2, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(2))
         mainLay.addWidget(self.editBoxes[-1], 2, 1)
-        decimalButton = QtGui.QPushButton('Decimal')
+        decimalButton = QtGui.QPushButton('&Decimal')
         self.buttons.addButton(decimalButton, 10)
         mainLay.addWidget(decimalButton, 3, 0, QtCore.Qt.AlignRight)
         self.editBoxes.append(AltBaseEdit(10))
         mainLay.addWidget(self.editBoxes[-1], 3, 1)
         for button in self.buttons.buttons():
             button.setCheckable(True)
-        self.buttons.button(self.coreRef.base).setChecked(True)
+        self.buttons.button(self.dlgRef.calc.base).setChecked(True)
         self.connect(self.buttons, QtCore.SIGNAL('buttonClicked(int)'),
                      self.changeBase)
-        closeButton = QtGui.QPushButton('Close')
+        closeButton = QtGui.QPushButton('&Close')
         topLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
 
     def updateData(self):
         """Update edit box contents for current registers"""
+        if self.tempBase and self.dlgRef.calc.flag != calccore.Mode.entryMode:
+            self.dlgRef.calc.base = 10
+            self.buttons.button(self.dlgRef.calc.base).setChecked(True)
+            self.tempBase = False
         for box in self.editBoxes:
-            box.setValue(self.coreRef.stack[0])
+            box.setValue(self.dlgRef.calc.stack[0])
 
     def changeBase(self, base):
         """Change base based on button click"""
-        self.coreRef.base = base
+        self.dlgRef.calc.base = base
 
-    # def convertNumber(self, num):
-        # """Convert number to the current base"""
-        # if self.base != 10:
-            # num = int(num, self.base)
-        # return num
+    def setTempBase(self, baseCode):
+        """Set new base from letter code"""
+        try:
+            self.dlgRef.calc.base = AltBaseDialog.baseCode[baseCode]
+            self.buttons.button(self.dlgRef.calc.base).setChecked(True)
+            self.tempBase = True
+        except KeyError:
+            pass
+
+    def keyPressEvent(self, keyEvent):
+        """Pass most keypresses to main dialog"""
+        if keyEvent.modifiers == QtCore.Qt.AltModifier:
+            QtGui.QWidget.keyPressEvent(self, keyEvent)
+        else:
+            self.dlgRef.keyPressEvent(keyEvent)
+
+    def keyReleaseEvent(self, keyEvent):
+        """Pass most key releases to main dialog"""
+        if keyEvent.modifiers == QtCore.Qt.AltModifier:
+            QtGui.QWidget.keyReleaseEvent(self, keyEvent)
+        else:
+            self.dlgRef.keyReleaseEvent(keyEvent)
 
 
 class AltBaseEdit(QtGui.QLabel):
