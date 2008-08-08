@@ -128,30 +128,30 @@ class ExtraDisplay(QtGui.QWidget):
         self.setLayout(topLay)
         self.tab = QtGui.QTabWidget()
         self.regView = RegViewWidget(dlgRef.calc)
-        self.tab.addTab(self.regView, 'Registers')
+        self.tab.addTab(self.regView, '&Registers')
         self.histView = HistViewWidget(dlgRef.calc)
-        self.tab.addTab(self.histView, 'History')
+        self.tab.addTab(self.histView, '&History')
         self.memView = MemViewWidget(dlgRef.calc)
-        self.tab.addTab(self.memView, 'Memory')
+        self.tab.addTab(self.memView, '&Memory')
         self.tab.setFocus()
         topLay.addWidget(self.tab)
         self.connect(self.tab, QtCore.SIGNAL('currentChanged(int)'),
                      self.tabUpdate)
         buttonLay = QtGui.QHBoxLayout()
         topLay.addLayout(buttonLay)
-        setButton = QtGui.QPushButton('Set\nCalc X')
+        setButton = QtGui.QPushButton('&Set\nCalc X')
         buttonLay.addWidget(setButton)
         self.connect(setButton, QtCore.SIGNAL('clicked()'), self.setXValue)
-        allCopyButton = QtGui.QPushButton('Copy\nPrecise')
+        allCopyButton = QtGui.QPushButton('Copy\n&Precise')
         buttonLay.addWidget(allCopyButton)
         self.connect(allCopyButton, QtCore.SIGNAL('clicked()'),
                      self.copyAllValue)
-        fixedCopyButton = QtGui.QPushButton('Copy\nFixed')
+        fixedCopyButton = QtGui.QPushButton('Copy\n&Fixed')
         buttonLay.addWidget(fixedCopyButton)
         self.connect(fixedCopyButton, QtCore.SIGNAL('clicked()'),
                      self.copyFixedValue)
         self.buttonList = [setButton, allCopyButton, fixedCopyButton]
-        closeButton = QtGui.QPushButton('Close')
+        closeButton = QtGui.QPushButton('&Close')
         topLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
         self.enableControls()
@@ -199,3 +199,17 @@ class ExtraDisplay(QtGui.QWidget):
         if clip.supportsSelection():
             clip.setText(text, QtGui.QClipboard.Selection)
         clip.setText(text)
+
+    def keyPressEvent(self, keyEvent):
+        """Pass most keypresses to main dialog"""
+        if keyEvent.modifiers == QtCore.Qt.AltModifier:
+            QtGui.QWidget.keyPressEvent(self, keyEvent)
+        else:
+            self.dlgRef.keyPressEvent(keyEvent)
+
+    def keyReleaseEvent(self, keyEvent):
+        """Pass most key releases to main dialog"""
+        if keyEvent.modifiers == QtCore.Qt.AltModifier:
+            QtGui.QWidget.keyReleaseEvent(self, keyEvent)
+        else:
+            self.dlgRef.keyReleaseEvent(keyEvent)
