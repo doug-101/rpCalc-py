@@ -32,7 +32,7 @@ class AltBaseDialog(QtGui.QWidget):
         topLay.addLayout(mainLay)
         self.buttons = QtGui.QButtonGroup(self)
         self.editBoxes = {}
-        hexButton = QtGui.QPushButton('&Hex')
+        hexButton = QtGui.QPushButton('He&x')
         self.buttons.addButton(hexButton, 16)
         mainLay.addWidget(hexButton, 0, 0, QtCore.Qt.AlignRight)
         self.editBoxes[16] = AltBaseEdit(16)
@@ -79,27 +79,32 @@ class AltBaseDialog(QtGui.QWidget):
         self.buttons.button(base).setChecked(True)
         self.dlgRef.calc.base = base
 
-    def setTempBase(self, baseCode):
-        """Set new base from letter code"""
+    def setTempBase(self, baseCode, temp=True):
+        """Set new base from letter code, temporarily if temp is true"""
         try:
             self.changeBase(AltBaseDialog.baseCode[baseCode])
-            self.tempBase = True
+            self.tempBase = temp
         except KeyError:
             pass
 
     def keyPressEvent(self, keyEvent):
         """Pass most keypresses to main dialog"""
-        if keyEvent.modifiers == QtCore.Qt.AltModifier:
+        if keyEvent.modifiers() == QtCore.Qt.AltModifier:
             QtGui.QWidget.keyPressEvent(self, keyEvent)
         else:
             self.dlgRef.keyPressEvent(keyEvent)
 
     def keyReleaseEvent(self, keyEvent):
         """Pass most key releases to main dialog"""
-        if keyEvent.modifiers == QtCore.Qt.AltModifier:
+        if keyEvent.modifiers() == QtCore.Qt.AltModifier:
             QtGui.QWidget.keyReleaseEvent(self, keyEvent)
         else:
             self.dlgRef.keyReleaseEvent(keyEvent)
+
+    def closeEvent(self, closeEvent):
+        """Change to tmpBase to reset base after closing"""
+        self.tempBase = True
+        QtGui.QWidget.closeEvent(self, closeEvent)
 
 
 class AltBaseEdit(QtGui.QLabel):
