@@ -53,7 +53,7 @@ class CalcDlg(QtGui.QWidget):
         self.popupMenu.addAction('Show &History List', self.viewHist)
         self.popupMenu.addAction('Show &Memory List', self.viewMem)
         self.popupMenu.addSeparator()
-        self.popupMenu.addAction('Show &Other Bases', self.viewAltBases)
+        self.popupMenu.addAction('Show Other &Bases', self.viewAltBases)
         self.popupMenu.addSeparator()
         self.popupMenu.addAction('Show ReadMe &File', self.help)
         self.popupMenu.addAction('&About rpCalc', self.about)
@@ -166,6 +166,8 @@ class CalcDlg(QtGui.QWidget):
 
         if self.calc.option.boolData('ExtraViewStartup'):
             self.viewReg()
+        if self.calc.option.boolData('AltBaseStartup'):
+            self.viewAltBases()
 
         xSize = self.calc.option.intData('MainDlgXSize', 0, 10000)
         ySize = self.calc.option.intData('MainDlgYSize', 0, 10000)
@@ -196,6 +198,8 @@ class CalcDlg(QtGui.QWidget):
                                 'Save previous entries')
         optiondlg.OptionDlgBool(self.optDlg, 'ExtraViewStartup',
                                 'Auto open extra data view')
+        optiondlg.OptionDlgBool(self.optDlg, 'AltBaseStartup',
+                                'Auto open alternate base view')
         self.optDlg.startGroupBox('Display')
         optiondlg.OptionDlgInt(self.optDlg, 'NumDecimalPlaces',
                                'Number of decimal places', 0, 9)

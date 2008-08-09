@@ -36,6 +36,7 @@ defaultList = [\
     "AngleUnit           deg",
     "SaveStacks          yes",
     "ExtraViewStartup    no",
+    "AltBaseStartup      no",
     "MaxHistLength       100",
     "ViewRegisters       no",
     "#",
