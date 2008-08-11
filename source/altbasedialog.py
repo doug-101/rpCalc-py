@@ -59,7 +59,7 @@ class AltBaseDialog(QtGui.QWidget):
         closeButton = QtGui.QPushButton('&Close')
         topLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
-        self.changeBase(self.dlgRef.calc.base)
+        self.changeBase(self.dlgRef.calc.base, False)
         option = self.dlgRef.calc.option
         self.move(option.intData('AltBaseXPos', 0, 10000),
                   option.intData('AltBaseYPos', 0, 10000))
@@ -67,22 +67,24 @@ class AltBaseDialog(QtGui.QWidget):
     def updateData(self):
         """Update edit box contents for current registers"""
         if self.tempBase and self.dlgRef.calc.flag != calccore.Mode.entryMode:
-            self.changeBase(10)
+            self.changeBase(10, False)
             self.tempBase = False
         for box in self.editBoxes.values():
             box.setValue(self.dlgRef.calc.stack[0])
 
-    def changeBase(self, base):
+    def changeBase(self, base, endEntryMode=True):
         """Change core's base, button depression and label highlighting"""
         self.editBoxes[self.dlgRef.calc.base].setHighlight(False)
         self.editBoxes[base].setHighlight(True)
         self.buttons.button(base).setChecked(True)
         self.dlgRef.calc.base = base
+        if endEntryMode and self.dlgRef.calc.flag == calccore.Mode.entryMode:
+            self.dlgRef.calc.flag = calccore.Mode.replMode
 
-    def setTempBase(self, baseCode, temp=True):
+    def setCodedBase(self, baseCode, temp=True):
         """Set new base from letter code, temporarily if temp is true"""
         try:
-            self.changeBase(AltBaseDialog.baseCode[baseCode])
+            self.changeBase(AltBaseDialog.baseCode[baseCode], not temp)
             self.tempBase = temp
         except KeyError:
             pass
