@@ -62,6 +62,7 @@ class OptionDlg(QtGui.QDialog):
         row = self.oldLayout.rowCount()
         self.oldLayout.addWidget(self.curGroup, row, 0, 1, 2)
         self.gridLayout = QtGui.QGridLayout(self.curGroup)
+        self.gridLayout.setVerticalSpacing(intSpace)
 
     def endGroupBox(self):
         """Cancel group box for next added items"""

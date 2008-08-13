@@ -211,14 +211,14 @@ class CalcDlg(QtGui.QWidget):
                                 'Use engineering notation')
         optiondlg.OptionDlgBool(self.optDlg, 'TrimExponents',
                                 'Hide exponent leading zeros')
+        optiondlg.OptionDlgBool(self.optDlg, 'ViewRegisters',
+                                'View Registers on LCD')
         optiondlg.OptionDlgBool(self.optDlg, 'HideLcdHighlight',
                                 'Hide LCD highlight')
         self.optDlg.startNewColumn()
         optiondlg.OptionDlgRadio(self.optDlg, 'AngleUnit', 'Angular Units',
                                  [('deg', 'Degrees'), ('rad', 'Radians')])
-        self.optDlg.startGroupBox('Extra Views')
-        optiondlg.OptionDlgBool(self.optDlg, 'ViewRegisters',
-                                'View Registers on LCD')
+        self.optDlg.startGroupBox('Extra Views', 20)
         optiondlg.OptionDlgPush(self.optDlg, 'View Extra Data', self.viewExtra)
         optiondlg.OptionDlgPush(self.optDlg, 'View Other Bases',
                                 self.viewAltBases)
