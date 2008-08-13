@@ -4,7 +4,7 @@
 # calccore.py, provides the non-GUI base classes
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2006, Douglas W. Bell
+# Copyright (C) 2008, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
