@@ -138,7 +138,7 @@ class CalcCore(object):
             if self.base == 10:
                 newStr = self.xStr + entStr
             else:
-                newStr = numberStr(self.stack[0],self.base) + entStr
+                newStr = numberStr(self.stack[0], self.base) + entStr
         else:
             newStr = ' ' + entStr    # space for minus sign
             if newStr == ' .':
@@ -161,7 +161,7 @@ class CalcCore(object):
 
     def expCmd(self):
         """Command to add an exponent"""
-        if self.flag == Mode.expMode:
+        if self.flag == Mode.expMode or self.base != 10:
             return False
         if self.flag == Mode.entryMode:
             self.xStr = self.xStr + 'e+0'
@@ -175,6 +175,10 @@ class CalcCore(object):
 
     def bspCmd(self):
         """Backspace command"""
+        if self.base != 10 and self.flag == Mode.entryMode:
+            self.xStr = numberStr(self.stack[0], self.base)
+            if self.xStr[0] != '-':
+                self.xStr = ' ' + self.xStr
         if self.flag == Mode.entryMode and len(self.xStr) > 2:
             self.xStr = self.xStr[:-1]
         elif self.flag == Mode.expMode:
@@ -189,7 +193,11 @@ class CalcCore(object):
             self.updateXStr()
             self.flag = Mode.replMode
             return True
-        self.stack[0] = float(self.xStr.replace(' ', ''))
+        if self.base == 10:
+            self.stack[0] = float(self.xStr.replace(' ', ''))
+        else:
+            self.stack[0] = float(int(self.xStr.replace(' ', ''), self.base))
+            self.xStr = self.formatNum(self.stack[0])
         if self.option.boolData('ThousandsSeparator'):
             self.xStr = self.addThousandsSep(self.xStr)
         return True
