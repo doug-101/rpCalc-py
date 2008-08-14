@@ -454,16 +454,18 @@ class CalcDlg(QtGui.QWidget):
             button.setDown(True)
             return
         letter = str(keyEvent.text()).upper()
-        if not self.entryStr and self.calc.base == 16 and \
-                 'A' <= letter <= 'F':
-            self.issueCmd(keyEvent.text())
-        elif keyEvent.modifiers() == QtCore.Qt.AltModifier and \
+        if keyEvent.modifiers() == QtCore.Qt.AltModifier and \
                 self.altBaseView and self.altBaseView.isVisible() and \
                 letter in ('X', 'O', 'B', 'D'):
             self.altBaseView.setCodedBase(letter, False)
+        elif not self.entryStr and self.calc.base == 16 and \
+                 'A' <= letter <= 'F':
+            self.issueCmd(keyEvent.text())
         elif self.altBaseView and self.altBaseView.isVisible() and \
-                self.calc.xStr == ' 0' and self.calc.flag == Mode.entryMode \
-                and letter in ('X', 'O', 'B', 'D'):
+                (self.calc.xStr == ' 0' or \
+                 (self.calc.stack[0] == 0.0 and self.calc.base != 10)) and \
+                self.calc.flag == Mode.entryMode and \
+                letter in ('X', 'O', 'B', 'D'):
             self.altBaseView.setCodedBase(letter, True)
         elif not self.entryStr and keyEvent.key() == QtCore.Qt.Key_Backspace:
             button = self.cmdDict['<-']
