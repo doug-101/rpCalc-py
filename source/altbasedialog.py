@@ -31,33 +31,39 @@ class AltBaseDialog(QtGui.QWidget):
         mainLay = QtGui.QGridLayout()
         topLay.addLayout(mainLay)
         self.buttons = QtGui.QButtonGroup(self)
-        self.editBoxes = {}
+        self.baseBoxes = {}
         hexButton = QtGui.QPushButton('He&x')
         self.buttons.addButton(hexButton, 16)
         mainLay.addWidget(hexButton, 0, 0, QtCore.Qt.AlignRight)
-        self.editBoxes[16] = AltBaseEdit(16)
-        mainLay.addWidget(self.editBoxes[16], 0, 1)
+        self.baseBoxes[16] = AltBaseBox(16)
+        mainLay.addWidget(self.baseBoxes[16], 0, 1)
         octalButton = QtGui.QPushButton('&Octal')
         self.buttons.addButton(octalButton, 8)
         mainLay.addWidget(octalButton, 1, 0, QtCore.Qt.AlignRight)
-        self.editBoxes[8] = AltBaseEdit(8)
-        mainLay.addWidget(self.editBoxes[8], 1, 1)
+        self.baseBoxes[8] = AltBaseBox(8)
+        mainLay.addWidget(self.baseBoxes[8], 1, 1)
         binaryButton = QtGui.QPushButton('&Binary')
         self.buttons.addButton(binaryButton, 2)
         mainLay.addWidget(binaryButton, 2, 0, QtCore.Qt.AlignRight)
-        self.editBoxes[2] = AltBaseEdit(2)
-        mainLay.addWidget(self.editBoxes[2], 2, 1)
+        self.baseBoxes[2] = AltBaseBox(2)
+        mainLay.addWidget(self.baseBoxes[2], 2, 1)
         decimalButton = QtGui.QPushButton('&Decimal')
         self.buttons.addButton(decimalButton, 10)
         mainLay.addWidget(decimalButton, 3, 0, QtCore.Qt.AlignRight)
-        self.editBoxes[10] = AltBaseEdit(10)
-        mainLay.addWidget(self.editBoxes[10], 3, 1)
+        self.baseBoxes[10] = AltBaseBox(10)
+        mainLay.addWidget(self.baseBoxes[10], 3, 1)
         for button in self.buttons.buttons():
             button.setCheckable(True)
         self.connect(self.buttons, QtCore.SIGNAL('buttonClicked(int)'),
                      self.changeBase)
+        topLay.addSpacing(6)
+        buttonLay = QtGui.QHBoxLayout()
+        topLay.addLayout(buttonLay)
+        copyButton = QtGui.QPushButton('Copy &Value')
+        buttonLay.addWidget(copyButton)
+        self.connect(copyButton, QtCore.SIGNAL('clicked()'), self.copyValue)
         closeButton = QtGui.QPushButton('&Close')
-        topLay.addWidget(closeButton)
+        buttonLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
         self.changeBase(self.dlgRef.calc.base, False)
         option = self.dlgRef.calc.option
@@ -69,13 +75,13 @@ class AltBaseDialog(QtGui.QWidget):
         if self.tempBase and self.dlgRef.calc.flag != calccore.Mode.entryMode:
             self.changeBase(10, False)
             self.tempBase = False
-        for box in self.editBoxes.values():
+        for box in self.baseBoxes.values():
             box.setValue(self.dlgRef.calc.stack[0])
 
     def changeBase(self, base, endEntryMode=True):
         """Change core's base, button depression and label highlighting"""
-        self.editBoxes[self.dlgRef.calc.base].setHighlight(False)
-        self.editBoxes[base].setHighlight(True)
+        self.baseBoxes[self.dlgRef.calc.base].setHighlight(False)
+        self.baseBoxes[base].setHighlight(True)
         self.buttons.button(base).setChecked(True)
         self.dlgRef.calc.base = base
         if endEntryMode and self.dlgRef.calc.flag == calccore.Mode.entryMode:
@@ -88,6 +94,14 @@ class AltBaseDialog(QtGui.QWidget):
             self.tempBase = temp
         except KeyError:
             pass
+
+    def copyValue(self):
+        """Copy the value in the current base to the clipboard"""
+        text = str(self.baseBoxes[self.dlgRef.calc.base].text())
+        clip = QtGui.QApplication.clipboard()
+        if clip.supportsSelection():
+            clip.setText(text, QtGui.QClipboard.Selection)
+        clip.setText(text)
 
     def keyPressEvent(self, keyEvent):
         """Pass most keypresses to main dialog"""
@@ -109,7 +123,7 @@ class AltBaseDialog(QtGui.QWidget):
         QtGui.QWidget.closeEvent(self, closeEvent)
 
 
-class AltBaseEdit(QtGui.QLabel):
+class AltBaseBox(QtGui.QLabel):
     """Displays an edit box at a particular base"""
     def __init__(self, base, parent=None):
         QtGui.QLabel.__init__(self, parent)
