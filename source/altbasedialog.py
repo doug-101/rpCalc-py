@@ -80,12 +80,14 @@ class AltBaseDialog(QtGui.QWidget):
 
     def changeBase(self, base, endEntryMode=True):
         """Change core's base, button depression and label highlighting"""
+        if self.dlgRef.calc.base == base:
+            return
         self.baseBoxes[self.dlgRef.calc.base].setHighlight(False)
         self.baseBoxes[base].setHighlight(True)
         self.buttons.button(base).setChecked(True)
         self.dlgRef.calc.base = base
         if endEntryMode and self.dlgRef.calc.flag == calccore.Mode.entryMode:
-            self.dlgRef.calc.flag = calccore.Mode.replMode
+            self.dlgRef.calc.flag = calccore.Mode.saveMode
 
     def setCodedBase(self, baseCode, temp=True):
         """Set new base from letter code, temporarily if temp is true"""
@@ -118,8 +120,8 @@ class AltBaseDialog(QtGui.QWidget):
             self.dlgRef.keyReleaseEvent(keyEvent)
 
     def closeEvent(self, closeEvent):
-        """Change to tmpBase to reset base after closing"""
-        self.tempBase = True
+        """Change back to base 10 before closing"""
+        self.changeBase(10)
         QtGui.QWidget.closeEvent(self, closeEvent)
 
 
