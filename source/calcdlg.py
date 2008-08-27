@@ -454,10 +454,14 @@ class CalcDlg(QtGui.QWidget):
             button.setDown(True)
             return
         letter = str(keyEvent.text()).upper()
-        if keyEvent.modifiers() == QtCore.Qt.AltModifier and \
-                self.altBaseView and self.altBaseView.isVisible() and \
-                letter in ('X', 'O', 'B', 'D'):
-            self.altBaseView.setCodedBase(letter, False)
+        if keyEvent.modifiers() == QtCore.Qt.AltModifier:
+            if self.altBaseView and self.altBaseView.isVisible():
+                if letter in ('X', 'O', 'B', 'D'):
+                    self.altBaseView.setCodedBase(letter, False)
+                elif letter == 'V':
+                    self.altBaseView.copyValue()
+                elif letter == 'C':
+                    self.altBaseView.close()
         elif not self.entryStr and self.calc.base == 16 and \
                  'A' <= letter <= 'F':
             self.issueCmd(keyEvent.text())
