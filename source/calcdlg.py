@@ -455,6 +455,10 @@ class CalcDlg(QtGui.QWidget):
             return
         letter = str(keyEvent.text()).upper()
         if keyEvent.modifiers() == QtCore.Qt.AltModifier:
+            if letter == 'R':
+                button = self.cmdDict.get('CLR')
+                button.clickEvent()
+                button.tmpDown(300)
             if self.altBaseView and self.altBaseView.isVisible():
                 if letter in ('X', 'O', 'B', 'D'):
                     self.altBaseView.setCodedBase(letter, False)

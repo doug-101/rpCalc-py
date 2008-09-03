@@ -109,18 +109,12 @@ class AltBaseDialog(QtGui.QWidget):
         clip.setText(text)
 
     def keyPressEvent(self, keyEvent):
-        """Pass most keypresses to main dialog"""
-        if keyEvent.modifiers() == QtCore.Qt.AltModifier:
-            QtGui.QWidget.keyPressEvent(self, keyEvent)
-        else:
-            self.dlgRef.keyPressEvent(keyEvent)
+        """Pass all keypresses to main dialog"""
+        self.dlgRef.keyPressEvent(keyEvent)
 
     def keyReleaseEvent(self, keyEvent):
-        """Pass most key releases to main dialog"""
-        if keyEvent.modifiers() == QtCore.Qt.AltModifier:
-            QtGui.QWidget.keyReleaseEvent(self, keyEvent)
-        else:
-            self.dlgRef.keyReleaseEvent(keyEvent)
+        """Pass all key releases to main dialog"""
+        self.dlgRef.keyReleaseEvent(keyEvent)
 
     def closeEvent(self, closeEvent):
         """Change back to base 10 before closing"""
