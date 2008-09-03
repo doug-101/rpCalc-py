@@ -433,6 +433,8 @@ class CalcDlg(QtGui.QWidget):
             self.entryStr = ':'   # optional command prefix
         else:
             newStr = (self.entryStr + ch).upper()
+            if newStr == ':Q':    # vim-like shortcut
+                newStr = 'EXIT'
             button = self.cmdDict.get(newStr.lstrip(':'))
             if button:
                 button.clickEvent()
