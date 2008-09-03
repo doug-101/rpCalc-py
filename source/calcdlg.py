@@ -429,16 +429,18 @@ class CalcDlg(QtGui.QWidget):
                 self.entryStr = ''
             else:
                 QtGui.QApplication.beep()
+        elif ch == ':' and not self.entryStr:
+            self.entryStr = ':'   # optional command prefix
         else:
             newStr = (self.entryStr + ch).upper()
-            button = self.cmdDict.get(newStr)
+            button = self.cmdDict.get(newStr.lstrip(':'))
             if button:
                 button.clickEvent()
                 button.tmpDown(300)
                 self.entryStr = ''
             else:
                 if [key for key in self.cmdDict.keys() if
-                    key.startswith(newStr)]:
+                    key.startswith(newStr.lstrip(':'))]:
                     self.entryStr += ch
                 else:
                     QtGui.QApplication.beep()
