@@ -22,7 +22,7 @@ class AltBaseDialog(QtGui.QWidget):
     def __init__(self, dlgRef, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.dlgRef = dlgRef
-        self.tempBase = False
+        self.prevBase = None   # revert to prevBase after temp base change
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Alternate Bases')
         self.setWindowIcon(icons.iconDict['calc'])
@@ -72,9 +72,9 @@ class AltBaseDialog(QtGui.QWidget):
 
     def updateData(self):
         """Update edit box contents for current registers"""
-        if self.tempBase and self.dlgRef.calc.flag != calccore.Mode.entryMode:
-            self.changeBase(10, False)
-            self.tempBase = False
+        if self.prevBase and self.dlgRef.calc.flag != calccore.Mode.entryMode:
+            self.changeBase(self.prevBase, False)
+            self.prevBase = None
         for box in self.baseBoxes.values():
             box.setValue(self.dlgRef.calc.stack[0])
 
@@ -91,9 +91,12 @@ class AltBaseDialog(QtGui.QWidget):
 
     def setCodedBase(self, baseCode, temp=True):
         """Set new base from letter code, temporarily if temp is true"""
+        if temp:
+            self.prevBase = self.dlgRef.calc.base
+        else:
+            self.prevBase = None
         try:
             self.changeBase(AltBaseDialog.baseCode[baseCode], not temp)
-            self.tempBase = temp
         except KeyError:
             pass
 
