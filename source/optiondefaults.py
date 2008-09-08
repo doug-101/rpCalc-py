@@ -39,6 +39,8 @@ defaultList = [\
     "AltBaseStartup      no",
     "MaxHistLength       100",
     "ViewRegisters       no",
+    "AltBaseLimit        32",
+    "UseTwosComplement   no",
     "#",
     "# Storage for persistant data",
     "Stack0              0.0",

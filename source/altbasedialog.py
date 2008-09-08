@@ -56,7 +56,12 @@ class AltBaseDialog(QtGui.QWidget):
             button.setCheckable(True)
         self.connect(self.buttons, QtCore.SIGNAL('buttonClicked(int)'),
                      self.changeBase)
-        topLay.addSpacing(6)
+        self.bitsLabel = QtGui.QLabel()
+        self.bitsLabel.setAlignment(QtCore.Qt.AlignHCenter)
+        self.bitsLabel.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Plain)
+        topLay.addSpacing(3)
+        topLay.addWidget(self.bitsLabel)
+        topLay.addSpacing(3)
         buttonLay = QtGui.QHBoxLayout()
         topLay.addLayout(buttonLay)
         copyButton = QtGui.QPushButton('Copy &Value')
@@ -66,6 +71,7 @@ class AltBaseDialog(QtGui.QWidget):
         buttonLay.addWidget(closeButton)
         self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
         self.changeBase(self.dlgRef.calc.base, False)
+        self.updateOptions()
         option = self.dlgRef.calc.option
         self.move(option.intData('AltBaseXPos', 0, 10000),
                   option.intData('AltBaseYPos', 0, 10000))
@@ -100,6 +106,21 @@ class AltBaseDialog(QtGui.QWidget):
         except KeyError:
             pass
 
+    def updateOptions(self):
+        """Update bit limit and two's complement use"""
+        sizeLimit = self.dlgRef.calc.option.intData('AltBaseLimit', 4, 128)
+        useTwosComplement = self.dlgRef.calc.option.\
+                            boolData('UseTwosComplement')
+        for box in self.baseBoxes.values():
+            if box.base != 10:
+                box.sizeLimit = sizeLimit
+                box.useTwosComplement = useTwosComplement
+        if useTwosComplement:
+            text = '%d bit, two\'s complement' % sizeLimit
+        else:
+            text = '%d bit, no two\'s complement' % sizeLimit
+        self.bitsLabel.setText(text)
+
     def copyValue(self):
         """Copy the value in the current base to the clipboard"""
         text = str(self.baseBoxes[self.dlgRef.calc.base].text())
@@ -127,6 +148,8 @@ class AltBaseBox(QtGui.QLabel):
     def __init__(self, base, parent=None):
         QtGui.QLabel.__init__(self, parent)
         self.base = base
+        self.sizeLimit = 0
+        self.useTwosComplement = False
         self.setHighlight(False)
         self.setLineWidth(3)
         self.setSizePolicy(QtGui.QSizePolicy.Expanding,

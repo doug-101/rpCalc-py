@@ -193,14 +193,14 @@ class CalcDlg(QtGui.QWidget):
         oldViewReg = self.calc.option.boolData('ViewRegisters')
         self.optDlg = optiondlg.OptionDlg(self.calc.option, self)
         self.optDlg.setWindowIcon(icons.iconDict['calc'])
-        self.optDlg.startGroupBox('Startup')
+        self.optDlg.startGroupBox('Startup', 8)
         optiondlg.OptionDlgBool(self.optDlg, 'SaveStacks',
                                 'Save previous entries')
         optiondlg.OptionDlgBool(self.optDlg, 'ExtraViewStartup',
                                 'Auto open extra data view')
         optiondlg.OptionDlgBool(self.optDlg, 'AltBaseStartup',
                                 'Auto open alternate base view')
-        self.optDlg.startGroupBox('Display')
+        self.optDlg.startGroupBox('Display', 8)
         optiondlg.OptionDlgInt(self.optDlg, 'NumDecimalPlaces',
                                'Number of decimal places', 0, 9)
         optiondlg.OptionDlgBool(self.optDlg, 'ThousandsSeparator',
@@ -218,7 +218,12 @@ class CalcDlg(QtGui.QWidget):
         self.optDlg.startNewColumn()
         optiondlg.OptionDlgRadio(self.optDlg, 'AngleUnit', 'Angular Units',
                                  [('deg', 'Degrees'), ('rad', 'Radians')])
-        self.optDlg.startGroupBox('Extra Views', 20)
+        self.optDlg.startGroupBox('Alternate Bases')
+        optiondlg.OptionDlgInt(self.optDlg, 'AltBaseLimit', 'Size limit',
+                               4, 128, True, 4, False, ' bits')
+        optiondlg.OptionDlgBool(self.optDlg, 'UseTwosComplement',
+                                'Use two\'s complement\nnegative numbers')
+        self.optDlg.startGroupBox('Extra Views',)
         optiondlg.OptionDlgPush(self.optDlg, 'View Extra Data', self.viewExtra)
         optiondlg.OptionDlgPush(self.optDlg, 'View Other Bases',
                                 self.viewAltBases)
@@ -238,6 +243,8 @@ class CalcDlg(QtGui.QWidget):
                         w.hide()
                 QtGui.qApp.processEvents()
                 self.adjustSize()
+            if self.altBaseView:
+                self.altBaseView.updateOptions()
             self.setLcdHighlight()
             self.calc.updateXStr()
         self.optDlg = None
