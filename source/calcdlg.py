@@ -219,8 +219,9 @@ class CalcDlg(QtGui.QWidget):
         optiondlg.OptionDlgRadio(self.optDlg, 'AngleUnit', 'Angular Units',
                                  [('deg', 'Degrees'), ('rad', 'Radians')])
         self.optDlg.startGroupBox('Alternate Bases')
-        optiondlg.OptionDlgInt(self.optDlg, 'AltBaseLimit', 'Size limit',
-                               4, 128, True, 4, False, ' bits')
+        optiondlg.OptionDlgInt(self.optDlg, 'AltBaseBits', 'Size limit',
+                               CalcCore.minNumBits, CalcCore.maxNumBits,
+                               True, 4, False, ' bits')
         optiondlg.OptionDlgBool(self.optDlg, 'UseTwosComplement',
                                 'Use two\'s complement\nnegative numbers')
         self.optDlg.startGroupBox('Extra Views',)

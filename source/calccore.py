@@ -33,6 +33,8 @@ class CalcCore(object):
     """Reverse Polish calculator functionality"""
     minMaxHist = 10
     maxMaxHist = 10000
+    minNumBits = 4
+    maxNumBits = 128
     def __init__(self):
         self.stack = calcstack.CalcStack()
         self.option = option.Option('rpcalc', 20)
@@ -42,8 +44,19 @@ class CalcCore(object):
         self.updateXStr()
         self.flag = Mode.saveMode
         self.base = 10
+        self.numBits = 0
+        self.useTwosComplement = False
         self.history = []
         self.histChg = 0
+        self.setAltBaseOptions()
+
+    def setAltBaseOptions(self):
+        """Update bit limit and two's complement use"""
+        self.numBits = self.option.intData('AltBaseBits', CalcCore.minNumBits,
+                                           CalcCore.maxNumBits)
+        if not self.numBits:
+            self.numBits = CalcCore.maxNumBits
+        self.useTwosComplement = self.option.boolData('UseTwosComplement')
 
     def restoreStack(self):
         """Read stack from option file"""
@@ -138,19 +151,17 @@ class CalcCore(object):
             if self.base == 10:
                 newStr = self.xStr + entStr
             else:
-                newStr = numberStr(self.stack[0], self.base) + entStr
+                newStr = self.numberStr(self.stack[0], self.base) + entStr
         else:
             newStr = ' ' + entStr    # space for minus sign
             if newStr == ' .':
                 newStr = ' 0.'
         try:
-            if self.base == 10:
-                num = float(newStr.replace(' ', ''))
-            else:
-                num = float(int(newStr.replace(' ', ''), self.base))
-                newStr = self.formatNum(num)  # decimal num in main display
+            num = self.convertNum(newStr)
         except ValueError:
             return False
+        if self.base != 10:
+            newStr = self.formatNum(num)    # decimal num in main display
         self.stack[0] = num
         if self.option.boolData('ThousandsSeparator'):
             newStr = self.addThousandsSep(newStr)
@@ -158,6 +169,46 @@ class CalcCore(object):
         if self.flag != Mode.expMode:
             self.flag = Mode.entryMode
         return True
+
+    def numberStr(self, number, base):
+        """Return string of number in given base (2-16)"""
+        digits = '0123456789abcdef'
+        number = int(round(number))
+        result = ''
+        sign = ''
+        if number == 0:
+            return '0'
+        if self.useTwosComplement:
+            if number >= 2**(self.numBits - 1) or \
+                    number < -2**(self.numBits - 1):
+                return 'overflow'
+            if number < 0:
+                number = 2**self.numBits + number
+        else:
+            if number < 0:
+                number = abs(number)
+                sign = '-'
+            if number >= 2**self.numBits:
+                return 'overflow'
+        while number:
+            number, remainder = divmod(number, base)
+            result = '%s%s' % (digits[remainder], result)
+        return '%s%s' % (sign, result)
+
+    def convertNum(self, numStr):
+        """Convert number string to float using current base"""
+        numStr = numStr.replace(' ', '')
+        if self.base == 10:
+            return float(numStr)
+        num = float(int(numStr, self.base))
+        if num >= 2**self.numBits:
+            self.xStr = 'error 9'
+            self.flag = Mode.errorMode
+            self.stack[0] = num
+            raise ValueError
+        if self.useTwosComplement and num >= 2**(self.numBits - 1):
+            num = num - 2**self.numBits
+        return num
 
     def expCmd(self):
         """Command to add an exponent"""
@@ -176,7 +227,7 @@ class CalcCore(object):
     def bspCmd(self):
         """Backspace command"""
         if self.base != 10 and self.flag == Mode.entryMode:
-            self.xStr = numberStr(self.stack[0], self.base)
+            self.xStr = self.numberStr(self.stack[0], self.base)
             if self.xStr[0] != '-':
                 self.xStr = ' ' + self.xStr
         if self.flag == Mode.entryMode and len(self.xStr) > 2:
@@ -193,10 +244,8 @@ class CalcCore(object):
             self.updateXStr()
             self.flag = Mode.replMode
             return True
-        if self.base == 10:
-            self.stack[0] = float(self.xStr.replace(' ', ''))
-        else:
-            self.stack[0] = float(int(self.xStr.replace(' ', ''), self.base))
+        self.stack[0] = self.convertNum(self.xStr)
+        if self.base != 10:
             self.xStr = self.formatNum(self.stack[0])
         if self.option.boolData('ThousandsSeparator'):
             self.xStr = self.addThousandsSep(self.xStr)
@@ -391,23 +440,6 @@ class CalcCore(object):
         """Print display string and all registers for debug"""
         print 'x =', self.xStr
         print '\n'.join([repr(num) for num in self.stack])
-
-
-def numberStr(number, base):
-    """Return string of number in given base (2-16)"""
-    digits = '0123456789abcdef'
-    number = int(round(number))
-    result = ''
-    sign = ''
-    if number < 0:
-        number = abs(number)
-        sign = '-'
-    if number == 0:
-        return '0'
-    while number:
-        number, remainder = divmod(number, base)
-        result = '%s%s' % (digits[remainder], result)
-    return '%s%s' % (sign, result)
 
 
 if __name__ == '__main__':

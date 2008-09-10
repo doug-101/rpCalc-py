@@ -104,7 +104,7 @@ class Option(object):
                 except ValueError:
                     pass
         print 'Option error - float key', key, 'is not valid'
-        return False
+        return 0
 
     def intData(self, key, min=None, max=None):
         """Return int from option data"""
@@ -119,7 +119,7 @@ class Option(object):
                 except ValueError:
                     pass
         print 'Option error - int key', key, 'is not valid'
-        return False
+        return 0
 
     def strData(self, key, emptyOk=0):
         """Return string from option data"""

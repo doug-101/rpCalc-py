@@ -35,22 +35,22 @@ class AltBaseDialog(QtGui.QWidget):
         hexButton = QtGui.QPushButton('He&x')
         self.buttons.addButton(hexButton, 16)
         mainLay.addWidget(hexButton, 0, 0, QtCore.Qt.AlignRight)
-        self.baseBoxes[16] = AltBaseBox(16)
+        self.baseBoxes[16] = AltBaseBox(16, self.dlgRef.calc)
         mainLay.addWidget(self.baseBoxes[16], 0, 1)
         octalButton = QtGui.QPushButton('&Octal')
         self.buttons.addButton(octalButton, 8)
         mainLay.addWidget(octalButton, 1, 0, QtCore.Qt.AlignRight)
-        self.baseBoxes[8] = AltBaseBox(8)
+        self.baseBoxes[8] = AltBaseBox(8, self.dlgRef.calc)
         mainLay.addWidget(self.baseBoxes[8], 1, 1)
         binaryButton = QtGui.QPushButton('&Binary')
         self.buttons.addButton(binaryButton, 2)
         mainLay.addWidget(binaryButton, 2, 0, QtCore.Qt.AlignRight)
-        self.baseBoxes[2] = AltBaseBox(2)
+        self.baseBoxes[2] = AltBaseBox(2, self.dlgRef.calc)
         mainLay.addWidget(self.baseBoxes[2], 2, 1)
         decimalButton = QtGui.QPushButton('&Decimal')
         self.buttons.addButton(decimalButton, 10)
         mainLay.addWidget(decimalButton, 3, 0, QtCore.Qt.AlignRight)
-        self.baseBoxes[10] = AltBaseBox(10)
+        self.baseBoxes[10] = AltBaseBox(10, self.dlgRef.calc)
         mainLay.addWidget(self.baseBoxes[10], 3, 1)
         for button in self.buttons.buttons():
             button.setCheckable(True)
@@ -86,14 +86,13 @@ class AltBaseDialog(QtGui.QWidget):
 
     def changeBase(self, base, endEntryMode=True):
         """Change core's base, button depression and label highlighting"""
-        if self.dlgRef.calc.base == base:
-            return
         self.baseBoxes[self.dlgRef.calc.base].setHighlight(False)
         self.baseBoxes[base].setHighlight(True)
         self.buttons.button(base).setChecked(True)
-        self.dlgRef.calc.base = base
-        if endEntryMode and self.dlgRef.calc.flag == calccore.Mode.entryMode:
+        if endEntryMode and self.dlgRef.calc.base != base and \
+                self.dlgRef.calc.flag == calccore.Mode.entryMode:
             self.dlgRef.calc.flag = calccore.Mode.saveMode
+        self.dlgRef.calc.base = base
 
     def setCodedBase(self, baseCode, temp=True):
         """Set new base from letter code, temporarily if temp is true"""
@@ -108,17 +107,11 @@ class AltBaseDialog(QtGui.QWidget):
 
     def updateOptions(self):
         """Update bit limit and two's complement use"""
-        sizeLimit = self.dlgRef.calc.option.intData('AltBaseLimit', 4, 128)
-        useTwosComplement = self.dlgRef.calc.option.\
-                            boolData('UseTwosComplement')
-        for box in self.baseBoxes.values():
-            if box.base != 10:
-                box.sizeLimit = sizeLimit
-                box.useTwosComplement = useTwosComplement
-        if useTwosComplement:
-            text = '%d bit, two\'s complement' % sizeLimit
+        self.dlgRef.calc.setAltBaseOptions()
+        if self.dlgRef.calc.useTwosComplement:
+            text = '%d bit, two\'s complement' % self.dlgRef.calc.numBits
         else:
-            text = '%d bit, no two\'s complement' % sizeLimit
+            text = '%d bit, no two\'s complement' % self.dlgRef.calc.numBits
         self.bitsLabel.setText(text)
 
     def copyValue(self):
@@ -145,11 +138,10 @@ class AltBaseDialog(QtGui.QWidget):
 
 class AltBaseBox(QtGui.QLabel):
     """Displays an edit box at a particular base"""
-    def __init__(self, base, parent=None):
+    def __init__(self, base, calcRef, parent=None):
         QtGui.QLabel.__init__(self, parent)
         self.base = base
-        self.sizeLimit = 0
-        self.useTwosComplement = False
+        self.calcRef = calcRef
         self.setHighlight(False)
         self.setLineWidth(3)
         self.setSizePolicy(QtGui.QSizePolicy.Expanding,
@@ -157,7 +149,7 @@ class AltBaseBox(QtGui.QLabel):
 
     def setValue(self, num):
         """Set value to num in proper base"""
-        self.setText(calccore.numberStr(num, self.base))
+        self.setText(self.calcRef.numberStr(num, self.base))
 
     def setHighlight(self, turnOn=True):
         """Make border bolder if turnOn is true, restore if false"""
