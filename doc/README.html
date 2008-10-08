@@ -9,7 +9,7 @@
 
 <p>Written by Doug Bell<br>
 Version 0.6.0<br>
-August 19, 2008</p>
+October 10, 2008</p>
 </center>
 
 <h2>Contents</h2>
@@ -208,17 +208,23 @@ function.</p>
 
 <p>When using non-decimal input modes, the decimal equivalent of the
 entry is still displayed on the main LCD.  Also, when in hex input mode,
-commands beginning with letters A-F cannot be typed.</p>
+commands beginning with letters A-F can only be typed if a colon (":")
+is used as a command prefix.</p>
 
 <p>There is also a Copy Value button that copies the value of the
 current input mode base to the clipboard for use in other
 applications.</p>
 
+<p>The option dialog has a setting for a limit on the number of bits.
+Numbers larger than the limit will display "overflow" in the alternate
+base window.  There is also a setting to show negative numbers as a
+two's complement number.</p>
+
 <h3><a name="option"></a>Options</h3>
 
 <p>The OPT key will show an options dialog box.  This includes settings
-for startup conditions, display parameters, angle units and extra
-views.</p>
+for startup conditions, display parameters, angle units, alternate bases
+and extra views.</p>
 
 <p>The startup options include whether to save the register entries
 between sessions and whether to open the extra data or alternate base
@@ -237,7 +243,7 @@ saved equations in the history list can also be set.</p>
 
 <h2><a name="revs"></a>Revision History</h2>
 
-<h3>August 19, 2008 - Release 0.6.0</h3>
+<h3>October 10, 2008 - Release 0.6.0</h3>
 
 <ul><b>New Features:</b>
 
@@ -245,6 +251,14 @@ saved equations in the history list can also be set.</p>
   hexadecimal, octal and binary bases.  Push buttons or keyboard
   prefixes can be used to allow entry of a value in one of these
   bases.</li>
+
+  <li>A colon (":") can optionally be used as a prefix when typing
+  commands.  This is useful in hexadecimal entry mode for commands
+  starting with letters "A" through "F".</li>
+
+  <li>New options have been added for alternate base conversions.  The
+  number of bits and whether to use two's complement for negative
+  numbers can be set.</li>
 
   <li>A display option was added to separate thousands with spaces in
   the main "LCD".</li>
