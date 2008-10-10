@@ -4,7 +4,7 @@ import py2exe
 
 setup(name = 'rpcalc',
       windows = [{'script': 'rpcalc.py',
-                  'icon_resources': [(1, 'rpcalc.ico')]}],
+                  'icon_resources': [(1, '../win/rpcalc.ico')]}],
       options = {'py2exe': {'includes': ['sip'],
                             'dist_dir': 'dist/lib'}})
 

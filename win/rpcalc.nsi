@@ -3,7 +3,7 @@
 ; Created       : 2004-3-11
 ; By            : Doug Bell
 ; License       : Free to use, modify and distribute, but with no warranty.
-; Last modified : 2006-10-02
+; Last modified : 2008-10-10
 
 ; rpCalc is an RPN calculator
 ; Please check the website for details and updates <http://www.bellz.org/>.
@@ -16,7 +16,7 @@
 ; The name of the installer
 
 !define NAME "rpCalc"
-!define VERSION "0.5.0"
+!define VERSION "0.6.0"
 
 ; Uncomment next line to include pyQt libraries in the installer
 !define PYQT
@@ -110,16 +110,17 @@ SectionEnd
 		File ".\lib\_ssl.pyd"
                 File ".\lib\bz2.pyd"
                 File ".\lib\mingwm10.dll"
+                File ".\lib\msvcp71.dll"
                 File ".\lib\MSVCR71.dll"
-		File ".\lib\python24.dll"
+		File ".\lib\python25.dll"
                 File ".\lib\QtCore4.dll"
                 File ".\lib\QtCore.pyd"
                 File ".\lib\QtGui4.dll"
                 File ".\lib\QtGui.pyd"
+                File ".\lib\select.pyd"
                 File ".\lib\sip.pyd"
                 File ".\lib\unicodedata.pyd"
                 File ".\lib\w9xpopen.exe"
-                File ".\lib\zlib.pyd"
 
 	SectionEnd
 !endif
@@ -165,6 +166,7 @@ Section /o "${NAME} source code" source
 	File ".\install.ico"
 	File ".\uninstall.ico"
 
+        File ".\source\altbasedialog.py"
         File ".\source\calcbutton.py"
         File ".\source\calccore.py"
         File ".\source\calcdlg.py"
@@ -228,27 +230,31 @@ Section "Uninstall"
 	Delete "$INSTDIR\lib\_ssl.pyd"
         Delete "$INSTDIR\lib\bz2.pyd"
         Delete "$INSTDIR\lib\mingwm10.dll"
+         Delete "$INSTDIR\lib\msvcp71.dll"
         Delete "$INSTDIR\lib\MSVCR71.dll"
-	Delete "$INSTDIR\lib\python24.dll"
+	Delete "$INSTDIR\lib\python25.dll"
         Delete "$INSTDIR\lib\QtCore4.dll"
         Delete "$INSTDIR\lib\QtCore.pyd"
         Delete "$INSTDIR\lib\QtGui4.dll"
         Delete "$INSTDIR\lib\QtGui.pyd"
+        Delete "$INSTDIR\lib\select.pyd"
         Delete "$INSTDIR\lib\sip.pyd"
         Delete "$INSTDIR\lib\unicodedata.pyd"
         Delete "$INSTDIR\lib\w9xpopen.exe"
-        Delete "$INSTDIR\lib\zlib.pyd"
 
         Delete "$INSTDIR\lib\_sre.pyd"
         Delete "$INSTDIR\lib\libqtc.pyd"
         Delete "$INSTDIR\lib\libsip.dll"
         Delete "$INSTDIR\lib\python23.dll"
+	Delete "$INSTDIR\lib\python24.dll"
         Delete "$INSTDIR\lib\qt-mt230nc.dll"
+        Delete "$INSTDIR\lib\zlib.pyd"
 
 	Delete "$INSTDIR\source\rpcalc.nsi"
 	Delete "$INSTDIR\source\install.ico"
 	Delete "$INSTDIR\source\uninstall.ico"
 
+        Delete "$INSTDIR\source\altbasedialog.py"
         Delete "$INSTDIR\source\calcbutton.py"
         Delete "$INSTDIR\source\calccore.py"
         Delete "$INSTDIR\source\calcdlg.py"
