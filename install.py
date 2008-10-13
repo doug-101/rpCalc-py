@@ -4,7 +4,7 @@
 ****************************************************************************
  install.py, Linux install script for rpCalc
 
- Copyright (C) 2006, Douglas W. Bell
+ Copyright (C) 2008, Douglas W. Bell
 
  This is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License, either Version 2 or any later
@@ -26,6 +26,7 @@ prefixDir = '/usr/local'
 buildRoot = '/'
 progName = 'rpcalc'
 docDir = 'share/doc/%s' % progName
+templateDir = 'share/%s/templates' % progName
 iconDir = 'share/icons/%s' % progName
 testXML = 0
 testSpell = 0
@@ -35,7 +36,7 @@ def usage(exitCode=2):
     global prefixDir
     global buildRoot
     print 'Usage:'
-    print '    python install.py [-h] [-p dir] [-d dir] [-b dir] [-x]'
+    print '    python install.py [-h] [-p dir] [-d dir] [-i dir] [-b dir] [-x]'
     print 'where:'
     print '    -h         display this help message'
     print '    -p dir     install prefix [default: %s]' % prefixDir
@@ -138,13 +139,14 @@ def removeDir(dir):
         pass   # some python versions have a bug
 
 def main():
-    optLetters = 'hp:d:i:b:x'
+    optLetters = 'hp:d:t:i:b:x'
     try:
         opts, args = getopt.getopt(sys.argv[1:], optLetters)
     except getopt.GetoptError:
         usage(2)
     global prefixDir
     global docDir
+    global templateDir
     global iconDir
     global buildRoot
     global progName
@@ -156,6 +158,8 @@ def main():
             prefixDir = os.path.abspath(val)
         elif opt == '-d':
             docDir = val
+        elif opt == '-t':
+            templateDir = val
         elif opt == '-i':
             iconDir = val
         elif opt == '-b':
@@ -165,6 +169,11 @@ def main():
     if not os.path.isfile('install.py'):
         print 'Error - %s files not found' % progName
         print 'The directory containing "install.py" must be current'
+        sys.exit(4)
+    if os.path.isdir('source') and \
+           not os.path.isfile('source/%s.py' % progName):
+        print 'Error - source files not found'
+        print 'Retry the extraction from the tar archive'
         sys.exit(4)
     if depCheck:
         print 'Checking dependencies...'
@@ -183,7 +192,8 @@ def main():
         try:
             from PyQt4 import QtCore, QtGui
         except:
-            print '  Sorry, Qt Version 4.1 or higher and PyQt Version 4.0 or higher are required'
+            print '  Sorry, Qt Version 4.1 or higher and '\
+                  'PyQt Version 4.0 or higher are required'
             sys.exit(3)
         qtVersion = QtCore.qVersion()
         if cmpVersions(qtVersion, (4, 1)):
@@ -216,16 +226,17 @@ def main():
 
     pythonPrefixDir = os.path.join(prefixDir, 'lib', progName)
     pythonBuildDir = os.path.join(buildRoot, pythonPrefixDir[1:])
+
     if os.path.isdir('source'):
         compileall.compile_dir('source', ddir=os.path.join(prefixDir, 'source'))
         print 'Installing files...'
         print '  Copying python files to %s' % pythonBuildDir
         removeDir(pythonBuildDir)         # remove old?
         copyDir('source', pythonBuildDir)
-    if os.path.isdir(os.path.join('source', 'plugins')):
+    if os.path.isdir('source/plugins'):
         pluginBuildDir = os.path.join(pythonBuildDir, 'plugins')
         print '  Creating plugins directory if necessary'
-        copyDir(os.path.join('source', 'plugins'), pluginBuildDir)
+        copyDir('source/plugins', pluginBuildDir)
     if os.path.isdir('translations'):
         translationDir = os.path.join(pythonBuildDir, 'translations')
         print '  Copying translation files to %s' % translationDir
@@ -242,6 +253,18 @@ def main():
                     'helpFilePath = None',
                     'helpFilePath = \'%s\'   # modified by install script\n'
                     % docPrefixDir)
+    if os.path.isdir('templates'):
+        templatePrefixDir = templateDir.replace('<prefix>/', '')
+        if not os.path.isabs(templatePrefixDir):
+            templatePrefixDir = os.path.join(prefixDir, templatePrefixDir)
+        templateBuildDir = os.path.join(buildRoot, templatePrefixDir[1:])
+        print '  Copying template files to %s' % templateBuildDir
+        copyDir('templates', templateBuildDir)
+        # update help file location in main python script
+        replaceLine(os.path.join(pythonBuildDir, '%s.py' % progName),
+                    'templatePath = None',
+                    'templatePath = \'%s\'   # modified by install script\n'
+                    % templatePrefixDir)
     if os.path.isdir('data'):
         dataPrefixDir = os.path.join(prefixDir, 'share', progName)
         dataBuildDir = os.path.join(buildRoot, dataPrefixDir[1:])
@@ -265,6 +288,18 @@ def main():
                     'iconPath = None',
                     'iconPath =  \'%s\'   # modified by install script\n'
                     % iconPrefixDir)
+        if os.path.isdir('icons/toolbar'):
+            iconToolBuildDir = os.path.join(iconBuildDir, 'toolbar')
+            copyDir('icons/toolbar', iconToolBuildDir)
+            if os.path.isdir('icons/toolbar/16x16'):
+                copyDir('icons/toolbar/16x16',
+                        os.path.join(iconToolBuildDir, '16x16'))
+            if os.path.isdir('icons/toolbar/32x32'):
+                copyDir('icons/toolbar/32x32', 
+                        os.path.join(iconToolBuildDir, '32x32'))
+        if os.path.isdir('icons/tree'):
+            copyDir('icons/tree', os.path.join(iconBuildDir, 'tree'))
+
     if os.path.isdir('source'):
         createWrapper(pythonPrefixDir, progName)
         binBuildDir = os.path.join(buildRoot, prefixDir[1:], 'bin')
@@ -273,7 +308,7 @@ def main():
             os.makedirs(binBuildDir)
         shutil.copy2(progName, binBuildDir)
         cleanSource()
-    print 'Install complete.'
+        print 'Install complete.'
 
 
 if __name__ == '__main__':
