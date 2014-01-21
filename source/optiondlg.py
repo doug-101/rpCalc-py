@@ -159,7 +159,7 @@ class OptionDlgDbl(OptionDlgItem):
             return
         num = float(str(text))
         if num != self.dlg.option.numData(self.key):
-            self.dlg.option.changeData(self.key, `num`, self.writeChg)
+            self.dlg.option.changeData(self.key, repr(num), self.writeChg)
 
 class OptionDlgStr(OptionDlgItem):
     """Holds widget for string line edit"""
@@ -172,7 +172,7 @@ class OptionDlgStr(OptionDlgItem):
 
     def updateData(self):
         """Update Option class based on edit status"""
-        newStr = unicode(self.control.text())
+        newStr = self.control.text()
         if newStr != self.dlg.option.strData(self.key, True):
             self.dlg.option.changeData(self.key, newStr, self.writeChg)
 

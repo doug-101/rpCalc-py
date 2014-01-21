@@ -438,15 +438,15 @@ class CalcCore(object):
 
     def printDebug(self):
         """Print display string and all registers for debug"""
-        print 'x =', self.xStr
-        print '\n'.join([repr(num) for num in self.stack])
+        print('x =', self.xStr)
+        print('\n'.join([repr(num) for num in self.stack]))
 
 
 if __name__ == '__main__':
     calc = CalcCore()
     calc.printDebug()
     while 1:
-        ans = raw_input('Entry->')
+        ans = input('Entry->')
         if ans in ('ENT', 'X<>Y', 'CHS', 'CLR', '<-', 'X^2', 'SQRT', 'Y^X',
                    'XRT', 'RCIP', 'SIN', 'COS', 'TAN', 'LN', 'E^X', 'ASIN',
                    'ACOS', 'ATAN', 'LOG', 'TN^X', 'STO', 'RCL', 'R<', 'R>',

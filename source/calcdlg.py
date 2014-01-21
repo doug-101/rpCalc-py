@@ -336,14 +336,15 @@ class CalcDlg(QtGui.QWidget):
         modPath = os.path.abspath(sys.path[0])
         pathList = [helpFilePath, os.path.join(modPath, '../doc/'),
                     modPath, 'doc/']
-        for path in filter(None, pathList):
-            try:
-                fullPath = os.path.join(path, 'README.html')
-                f = file(fullPath, 'r')
-                f.close()
-                return fullPath
-            except IOError:
-                pass
+        for path in pathList:
+            if path:
+                try:
+                    fullPath = os.path.join(path, 'README.html')
+                    f = file(fullPath, 'r')
+                    f.close()
+                    return fullPath
+                except IOError:
+                    pass
         return ''
 
     def help(self):

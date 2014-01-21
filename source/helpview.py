@@ -69,7 +69,7 @@ class HelpView(QtGui.QMainWindow):
 
     def showLink(self, text):
         """Send link text to the statusbar"""
-        self.statusBar().showMessage(unicode(text))
+        self.statusBar().showMessage(text)
 
 
 class HelpViewer(QtGui.QTextBrowser):
@@ -79,8 +79,8 @@ class HelpViewer(QtGui.QTextBrowser):
 
     def setSource(self, url):
         """Called when user clicks on a URL"""
-        name = unicode(url.toString())
-        if name.startswith(u'http'):
+        name = url.toString()
+        if name.startswith('http'):
             webbrowser.open(name, True)
         else:
             QtGui.QTextBrowser.setSource(self, QtCore.QUrl(name))

@@ -55,7 +55,7 @@ class Option(object):
                 try:
                     f = codecs.open(self.path, 'w', 'utf-8')
                 except IOError:
-                    print 'Error - could not write to config file', self.path
+                    print('Error - could not write to config file', self.path)
                     self.path = ''
                 else:
                     f.writelines([line + '\n' for line in defaultList])
@@ -88,7 +88,7 @@ class Option(object):
                 return True
             if val and val[0] in ('n', 'N'):
                 return False
-        print 'Option error - bool key', key, 'is not valid'
+        print('Option error - bool key', key, 'is not valid')
         return False
 
     def numData(self, key, min=None, max=None):
@@ -103,7 +103,7 @@ class Option(object):
                         return num
                 except ValueError:
                     pass
-        print 'Option error - float key', key, 'is not valid'
+        print('Option error - float key', key, 'is not valid')
         return 0
 
     def intData(self, key, min=None, max=None):
@@ -118,7 +118,7 @@ class Option(object):
                         return num
                 except ValueError:
                     pass
-        print 'Option error - int key', key, 'is not valid'
+        print('Option error - int key', key, 'is not valid')
         return 0
 
     def strData(self, key, emptyOk=0):
@@ -128,7 +128,7 @@ class Option(object):
             if val != None:
                 if val or emptyOk:
                     return val
-        print 'Option error - string key', key, 'is not valid'
+        print('Option error - string key', key, 'is not valid')
         return ''
 
     def changeData(self, key, strData, storeChange):
@@ -143,7 +143,7 @@ class Option(object):
                 if storeChange:
                     self.chgList.append(key)
                 return True
-        print 'Option error - key', key, 'is not valid'
+        print('Option error - key', key, 'is not valid')
         return False
 
     def writeChanges(self):
@@ -172,5 +172,5 @@ class Option(object):
                 f.close()
                 return True
             except IOError:
-                print 'Error - could not write to config file', self.path
+                print('Error - could not write to config file', self.path)
         return False
