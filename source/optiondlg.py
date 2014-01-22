@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #****************************************************************************
 # optiondlg.py, provides classes for option setting dialogs
 #
-# Copyright (C) 2005, Douglas W. Bell
+# Copyright (C) 2014, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -16,7 +16,8 @@ from PyQt4 import QtCore, QtGui
 
 
 class OptionDlg(QtGui.QDialog):
-    """Works with Option class to provide a dialog for pref/options"""
+    """Works with Option class to provide a dialog for pref/options.
+    """
     def __init__(self, option, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.WindowTitleHint |
@@ -36,18 +37,17 @@ class OptionDlg(QtGui.QDialog):
         ctrlLayout.addStretch(0)
         okButton = QtGui.QPushButton('&OK', self)
         ctrlLayout.addWidget(okButton)
-        self.connect(okButton, QtCore.SIGNAL('clicked()'), self,
-                     QtCore.SLOT('accept()'))
+        okButton.clicked.connect(self.accept)
         cancelButton = QtGui.QPushButton('&Cancel', self)
         ctrlLayout.addWidget(cancelButton)
-        self.connect(cancelButton, QtCore.SIGNAL('clicked()'), self,
-                     QtCore.SLOT('reject()'))
+        cancelButton.clicked.connect(self.reject)
         self.setWindowTitle('Preferences')
         self.itemList = []
         self.curGroup = None
 
     def addItem(self, dlgItem, widget, label=None):
-        """Add a control with optional label, called by OptionDlgItem"""
+        """Add a control with optional label, called by OptionDlgItem.
+        """
         row = self.gridLayout.rowCount()
         if label:
             self.gridLayout.addWidget(label, row, 0)
@@ -57,7 +57,8 @@ class OptionDlg(QtGui.QDialog):
         self.itemList.append(dlgItem)
 
     def startGroupBox(self, title, intSpace=5):
-        """Use a group box for next added items"""
+        """Use a group box for next added items.
+        """
         self.curGroup = QtGui.QGroupBox(title, self)
         row = self.oldLayout.rowCount()
         self.oldLayout.addWidget(self.curGroup, row, 0, 1, 2)
@@ -65,12 +66,14 @@ class OptionDlg(QtGui.QDialog):
         self.gridLayout.setVerticalSpacing(intSpace)
 
     def endGroupBox(self):
-        """Cancel group box for next added items"""
+        """Cancel group box for next added items.
+        """
         self.gridLayout = self.oldLayout
         self.curGroup = None
 
     def startNewColumn(self):
-        """Cancel any group box and start a second column"""
+        """Cancel any group box and start a second column.
+        """
         self.curGroup = None
         row = self.oldLayout.rowCount()
         self.gridLayout = QtGui.QGridLayout()
@@ -78,20 +81,23 @@ class OptionDlg(QtGui.QDialog):
         self.oldLayout = self.gridLayout
 
     def parentGroup(self):
-        """Return parent for new widgets"""
+        """Return parent for new widgets.
+        """
         if self.curGroup:
             return self.curGroup
         return self
 
     def accept(self):
-        """Called by dialog when OK button pressed"""
+        """Called by dialog when OK button pressed.
+        """
         for item in self.itemList:
             item.updateData()
         QtGui.QDialog.accept(self)
 
 
 class OptionDlgItem:
-    """Base class for items to add to dialog"""
+    """Base class for items to add to dialog.
+    """
     def __init__(self, dlg, key, writeChg):
         self.dlg = dlg
         self.key = key
@@ -99,11 +105,13 @@ class OptionDlgItem:
         self.control = None
 
     def updateData(self):
-        """Dummy update function"""
+        """Dummy update function.
+        """
         pass
 
 class OptionDlgBool(OptionDlgItem):
-    """Holds widget for bool checkbox"""
+    """Holds widget for bool checkbox.
+    """
     def __init__(self, dlg, key, menuText, writeChg=True):
         OptionDlgItem.__init__(self, dlg, key, writeChg)
         self.control = QtGui.QCheckBox(menuText, dlg.parentGroup())
@@ -111,7 +119,8 @@ class OptionDlgBool(OptionDlgItem):
         dlg.addItem(self, self.control)
 
     def updateData(self):
-        """Update Option class based on checkbox status"""
+        """Update Option class based on checkbox status.
+        """
         if self.control.isChecked() != self.dlg.option.boolData(self.key):
             if self.control.isChecked():
                 self.dlg.option.changeData(self.key, 'yes', self.writeChg)
@@ -119,7 +128,8 @@ class OptionDlgBool(OptionDlgItem):
                 self.dlg.option.changeData(self.key, 'no', self.writeChg)
 
 class OptionDlgInt(OptionDlgItem):
-    """Holds widget for int spinbox"""
+    """Holds widget for int spinbox.
+    """
     def __init__(self, dlg, key, menuText, min, max, writeChg=True, step=1,
                  wrap=False, suffix=''):
         OptionDlgItem.__init__(self, dlg, key, writeChg)
@@ -134,13 +144,15 @@ class OptionDlgInt(OptionDlgItem):
         dlg.addItem(self, self.control, label)
 
     def updateData(self):
-        """Update Option class based on spinbox status"""
+        """Update Option class based on spinbox status.
+        """
         if self.control.value() != int(self.dlg.option.numData(self.key)):
             self.dlg.option.changeData(self.key, str(self.control.value()),
                                        self.writeChg)
 
 class OptionDlgDbl(OptionDlgItem):
-    """Holds widget for double line edit"""
+    """Holds widget for double line edit.
+    """
     def __init__(self, dlg, key, menuText, min, max, writeChg=True):
         OptionDlgItem.__init__(self, dlg, key, writeChg)
         label = QtGui.QLabel(menuText, dlg.parentGroup())
@@ -151,7 +163,8 @@ class OptionDlgDbl(OptionDlgItem):
         dlg.addItem(self, self.control, label)
 
     def updateData(self):
-        """Update Option class based on edit status"""
+        """Update Option class based on edit status.
+        """
         text = self.control.text()
         unusedPos = 0
         if self.control.validator().validate(text, unusedPos)[0] != \
@@ -162,7 +175,8 @@ class OptionDlgDbl(OptionDlgItem):
             self.dlg.option.changeData(self.key, repr(num), self.writeChg)
 
 class OptionDlgStr(OptionDlgItem):
-    """Holds widget for string line edit"""
+    """Holds widget for string line edit.
+    """
     def __init__(self, dlg, key, menuText, writeChg=True):
         OptionDlgItem.__init__(self, dlg, key, writeChg)
         label = QtGui.QLabel(menuText, dlg.parentGroup())
@@ -171,13 +185,15 @@ class OptionDlgStr(OptionDlgItem):
         dlg.addItem(self, self.control, label)
 
     def updateData(self):
-        """Update Option class based on edit status"""
+        """Update Option class based on edit status.
+        """
         newStr = self.control.text()
         if newStr != self.dlg.option.strData(self.key, True):
             self.dlg.option.changeData(self.key, newStr, self.writeChg)
 
 class OptionDlgRadio(OptionDlgItem):
-    """Holds widget for exclusive radio button group"""
+    """Holds widget for exclusive radio button group.
+    """
     def __init__(self, dlg, key, headText, textList, writeChg=True):
         # textList is list of tuples: optionText, labelText
         OptionDlgItem.__init__(self, dlg, key, writeChg)
@@ -198,15 +214,17 @@ class OptionDlgRadio(OptionDlgItem):
         dlg.addItem(self, buttonBox)
 
     def updateData(self):
-        """Update Option class based on button status"""
+        """Update Option class based on button status.
+        """
         data = self.optionList[self.control.checkedId()]
         if data != self.dlg.option.strData(self.key):
             self.dlg.option.changeData(self.key, data, self.writeChg)
 
 class OptionDlgPush(OptionDlgItem):
-    """Holds widget for extra misc. push button"""
+    """Holds widget for extra misc. push button.
+    """
     def __init__(self, dlg, text, cmd):
         OptionDlgItem.__init__(self, dlg, '', 0)
         self.control = QtGui.QPushButton(text, dlg.parentGroup())
-        self.control.connect(self.control, QtCore.SIGNAL('clicked()'), cmd)
+        self.control.clicked.connect(cmd)
         dlg.addItem(self, self.control)

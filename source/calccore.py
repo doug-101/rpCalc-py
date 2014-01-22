@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #****************************************************************************
 # calccore.py, provides the non-GUI base classes
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2008, Douglas W. Bell
+# Copyright (C) 2014, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -17,8 +17,9 @@ import option
 import optiondefaults
 import calcstack
 
-class Mode(object):
-    """Enum for calculator modes"""
+class Mode:
+    """Enum for calculator modes.
+    """
     entryMode = 100  # in num entry - adds to num string
     saveMode = 101   # after result - previous result becomes Y
     replMode = 102   # after enter key - replaces X
@@ -29,8 +30,9 @@ class Mode(object):
     errorMode = 107  # error notification - any cmd to resume
 
 
-class CalcCore(object):
-    """Reverse Polish calculator functionality"""
+class CalcCore:
+    """Reverse Polish calculator functionality.
+    """
     minMaxHist = 10
     maxMaxHist = 10000
     minNumBits = 4
@@ -51,7 +53,8 @@ class CalcCore(object):
         self.setAltBaseOptions()
 
     def setAltBaseOptions(self):
-        """Update bit limit and two's complement use"""
+        """Update bit limit and two's complement use.
+        """
         self.numBits = self.option.intData('AltBaseBits', CalcCore.minNumBits,
                                            CalcCore.maxNumBits)
         if not self.numBits:
@@ -59,7 +62,8 @@ class CalcCore(object):
         self.useTwosComplement = self.option.boolData('UseTwosComplement')
 
     def restoreStack(self):
-        """Read stack from option file"""
+        """Read stack from option file.
+        """
         if self.option.boolData('SaveStacks'):
             self.stack.replaceAll([self.option.numData('Stack' + repr(x)) for
                                    x in range(4)])
@@ -69,7 +73,8 @@ class CalcCore(object):
             self.mem = [0.0] * 10
 
     def saveStack(self):
-        """Store stack to option file"""
+        """Store stack to option file.
+        """
         if self.option.boolData('SaveStacks'):
             [self.option.changeData('Stack' + repr(x), repr(self.stack[x]), 1)
              for x in range(4)]
@@ -78,7 +83,8 @@ class CalcCore(object):
             self.option.writeChanges()
 
     def updateXStr(self):
-        """get display string from X register"""
+        """get display string from X register.
+        """
         if abs(self.stack[0]) > 1e299:
             self.xStr = 'error 9'
             self.flag = Mode.errorMode
@@ -89,7 +95,8 @@ class CalcCore(object):
             self.xStr = self.formatNum(self.stack[0])
 
     def formatNum(self, num):
-        """Return number formatted per options"""
+        """Return number formatted per options.
+        """
         absNum = abs(num)
         plcs = self.option.intData('NumDecimalPlaces', 0, 9)
         forceSci = self.option.boolData('ForceSciNotation')
@@ -99,27 +106,28 @@ class CalcCore(object):
                               or useEng):
             exp = int(math.floor(math.log10(absNum)))
             if useEng:
-                exp = 3 * int(math.floor(exp / 3.0))
+                exp = 3 * (exp // 3)
             num /= 10**exp
             num = round(num, plcs)  # check if rounding bumps exponent
             if useEng and abs(num) >= 1000.0:
                 num /= 1000.0
                 exp += 3
-            elif not useEng and abs(num) >= 10:
+            elif not useEng and abs(num) >= 10.0:
                 num /= 10.0
                 exp += 1
-        numStr = '% 0.*f' % (plcs, num)
+        numStr = '{: 0.{pl}f}'.format(num, pl=plcs)
         if self.option.boolData('ThousandsSeparator'):
             numStr = self.addThousandsSep(numStr)
         if exp != 0 or forceSci:
             expDigits = 4
             if self.option.boolData('TrimExponents'):
                 expDigits = 1
-            numStr = '%se%+0*d' % (numStr, expDigits, exp)
+            numStr = '{0}e{1:+0{pl}d}'.format(numStr, exp, pl=expDigits)
         return numStr
 
     def addThousandsSep(self, numStr):
-        """Return number string with thousands separators added"""
+        """Return number string with thousands separators added.
+        """
         leadChar = ''
         if numStr[0] < '0' or numStr[0] > '9':
             leadChar = numStr[0]
@@ -133,18 +141,21 @@ class CalcCore(object):
         return leadChar + numStr
 
     def sciFormatX(self, decPlcs):
-        """Return X register str in sci notation"""
-        return ('% 0.' + repr(decPlcs) + 'e') % self.stack[0]
+        """Return X register str in sci notation.
+        """
+        return '{: 0.{pl}e}'.format(self.stack[0], pl=decPlcs)
 
     def newXValue(self, value):
-        """Push X onto stack, replace with value"""
+        """Push X onto stack, replace with value.
+        """
         self.stack.enterX()
         self.stack[0] = float(value)
         self.updateXStr()
         self.flag = Mode.saveMode
         
     def numEntry(self, entStr):
-        """Interpret a digit entered depending on mode"""
+        """Interpret a digit entered depending on mode.
+        """
         if self.flag == Mode.saveMode:
             self.stack.enterX()
         if self.flag in (Mode.entryMode, Mode.expMode):
@@ -171,7 +182,8 @@ class CalcCore(object):
         return True
 
     def numberStr(self, number, base):
-        """Return string of number in given base (2-16)"""
+        """Return string of number in given base (2-16).
+        """
         digits = '0123456789abcdef'
         number = int(round(number))
         result = ''
@@ -192,11 +204,12 @@ class CalcCore(object):
                 return 'overflow'
         while number:
             number, remainder = divmod(number, base)
-            result = '%s%s' % (digits[remainder], result)
-        return '%s%s' % (sign, result)
+            result = '{0}{1}'.format(digits[remainder], result)
+        return '{0}{1}'.format(sign, result)
 
     def convertNum(self, numStr):
-        """Convert number string to float using current base"""
+        """Convert number string to float using current base.
+        """
         numStr = numStr.replace(' ', '')
         if self.base == 10:
             return float(numStr)
@@ -211,7 +224,8 @@ class CalcCore(object):
         return num
 
     def expCmd(self):
-        """Command to add an exponent"""
+        """Command to add an exponent.
+        """
         if self.flag == Mode.expMode or self.base != 10:
             return False
         if self.flag == Mode.entryMode:
@@ -225,7 +239,8 @@ class CalcCore(object):
         return True
 
     def bspCmd(self):
-        """Backspace command"""
+        """Backspace command.
+        """
         if self.base != 10 and self.flag == Mode.entryMode:
             self.xStr = self.numberStr(self.stack[0], self.base)
             if self.xStr[0] != '-':
@@ -252,7 +267,8 @@ class CalcCore(object):
         return True
 
     def chsCmd(self):
-        """Change sign command"""
+        """Change sign command.
+        """
         if self.flag == Mode.expMode:
             numExp = self.xStr.split('e', 1)
             if numExp[1][0] == '+':
@@ -268,7 +284,8 @@ class CalcCore(object):
         return True
 
     def memStoRcl(self, numStr):
-        """Handle memMode number entry for mem & dec plcs"""
+        """Handle memMode number entry for mem & dec plcs.
+        """
         if len(numStr) == 1 and '0' <= numStr <= '9':
             num = int(numStr)
             if self.flag == Mode.memStoMode:
@@ -288,16 +305,18 @@ class CalcCore(object):
         return True
 
     def angleConv(self):
-        """Return angular conversion factor from options"""
+        """Return angular conversion factor from options.
+        """
         type = self.option.strData('AngleUnit')
         if type == 'rad':
             return 1.0
         if type == 'grad':
-            return math.pi / 200.0
-        return math.pi / 180.0   # degree
+            return math.pi / 200
+        return math.pi / 180   # degree
 
     def cmd(self, cmdStr):
-        """Main command interpreter - returns true/false if change made"""
+        """Main command interpreter - returns true/false if change made.
+        """
         if self.flag in (Mode.memStoMode, Mode.memRclMode, Mode.decPlcMode):
             return self.memStoRcl(cmdStr)
         if self.flag == Mode.errorMode:    # reset display, ignore next command
@@ -312,8 +331,9 @@ class CalcCore(object):
                 if self.base == 16 and 'A' <= cmdStr <= 'F':
                     return self.numEntry(cmdStr)
                 if cmdStr in '+-*/':
-                    eqn = '%s %s %s' % (self.formatNum(self.stack[1]), cmdStr,
-                                        self.formatNum(self.stack[0]))
+                    eqn = '{0} {1} {2}'.format(self.formatNum(self.stack[1]),
+                                               cmdStr,
+                                               self.formatNum(self.stack[0]))
                     if cmdStr == '+':
                         self.stack.replaceXY(self.stack[1] + self.stack[0])
                     elif cmdStr == '-':
@@ -369,27 +389,27 @@ class CalcCore(object):
                 self.stack.enterX()
                 self.stack[0] = math.pi
             elif cmdStr == 'X^2':          # square
-                eqn = '(%s)^2' % self.formatNum(self.stack[0])
+                eqn = '{0}^2'.format(self.formatNum(self.stack[0]))
                 self.stack[0] = self.stack[0] * self.stack[0]
             elif cmdStr == 'Y^X':          # x power of y
-                eqn = '(%s)^%s' % (self.formatNum(self.stack[1]),
-                                   self.formatNum(self.stack[0]))
+                eqn = '({0})^{1}'.format(self.formatNum(self.stack[1]),
+                                         self.formatNum(self.stack[0]))
                 self.stack.replaceXY(self.stack[1] ** self.stack[0])
             elif cmdStr == 'XRT':          # x root of y
-                eqn = '(%s)^(1/%s)' % (self.formatNum(self.stack[1]),
-                                       self.formatNum(self.stack[0]))
-                self.stack.replaceXY(self.stack[1] ** (1.0/self.stack[0]))
+                eqn = '({0})^(1/{1})'.format(self.formatNum(self.stack[1]),
+                                             self.formatNum(self.stack[0]))
+                self.stack.replaceXY(self.stack[1] ** (1/self.stack[0]))
             elif cmdStr == 'RCIP':         # 1/x
-                eqn = '1 / (%s)' % self.formatNum(self.stack[0])
-                self.stack[0] = 1.0 / self.stack[0]
+                eqn = '1 / ({0})'.format(self.formatNum(self.stack[0]))
+                self.stack[0] = 1 / self.stack[0]
             elif cmdStr == 'E^X':          # inverse natural log
-                eqn = 'e^(%s)' % self.formatNum(self.stack[0])
+                eqn = 'e^({0})'.format(self.formatNum(self.stack[0]))
                 self.stack[0] = math.exp(self.stack[0])
             elif cmdStr == 'TN^X':         # inverse base 10 log
-                eqn = '10^(%s)' % self.formatNum(self.stack[0])
+                eqn = '10^({0})'.format(self.formatNum(self.stack[0]))
                 self.stack[0] = 10.0 ** self.stack[0]
             else:
-                eqn = '%s(%s)' % (cmdStr, self.formatNum(self.stack[0]))
+                eqn = '{0}({1})'.format(cmdStr, self.formatNum(self.stack[0]))
                 if cmdStr == 'SQRT':         # square root
                     self.stack[0] = math.sqrt(self.stack[0])
                 elif cmdStr == 'SIN':          # sine
@@ -437,7 +457,8 @@ class CalcCore(object):
             return True
 
     def printDebug(self):
-        """Print display string and all registers for debug"""
+        """Print display string and all registers for debug.
+        """
         print('x =', self.xStr)
         print('\n'.join([repr(num) for num in self.stack]))
 

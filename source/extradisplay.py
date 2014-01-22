@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #****************************************************************************
 # extradisplay.py, provides display windows for extra data
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2008, Douglas W. Bell
+# Copyright (C) 2014, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -17,20 +17,23 @@ import icons
 
 
 class ExtraViewWidget(QtGui.QTreeWidget):
-    """Base class of list views for ExtraDisplay"""
+    """Base class of list views for ExtraDisplay.
+    """
     def __init__(self, calcRef, parent=None):
         QtGui.QListView.__init__(self, parent)
         self.calcRef = calcRef
         self.setRootIsDecorated(False)
 
     def setHeadings(self, headerLabels):
-        """Add headings to columns"""
+        """Add headings to columns.
+        """
         self.setColumnCount(len(headerLabels))
         self.setHeaderLabels(headerLabels)
 
 
 class RegViewWidget(ExtraViewWidget):
-    """Register list view for ExtraDisplay"""
+    """Register list view for ExtraDisplay.
+    """
     def __init__(self, calcRef, parent=None):
         ExtraViewWidget.__init__(self, calcRef, parent)
         self.setHeadings(['Name', 'Value'])
@@ -43,13 +46,15 @@ class RegViewWidget(ExtraViewWidget):
         self.updateData()
 
     def updateData(self):
-        """Update with current data"""
+        """Update with current data.
+        """
         for i in range(4):
-            self.topLevelItem(i).setText(1,
-                                         '%.15g' % self.calcRef.stack[3 - i])
+            self.topLevelItem(i).setText(1, '{:.15g}'.
+                                         format(self.calcRef.stack[3 - i]))
 
     def selectedValue(self):
-        """Return number for selected line"""
+        """Return number for selected line.
+        """
         if self.selectedItems():
             pos = self.indexOfTopLevelItem(self.selectedItems()[0])
             return self.calcRef.stack[3 - pos]
@@ -57,14 +62,16 @@ class RegViewWidget(ExtraViewWidget):
 
 
 class HistViewWidget(ExtraViewWidget):
-    """History list view for ExtraDisplay"""
+    """History list view for ExtraDisplay.
+    """
     def __init__(self, calcRef, parent=None):
         ExtraViewWidget.__init__(self, calcRef, parent)
         self.setHeadings(['Equation', 'Value'])
         self.updateData()
 
     def updateData(self):
-        """Update with current data"""
+        """Update with current data.
+        """
         if not self.calcRef.histChg:
             return
         maxLen = self.calcRef.option.intData('MaxHistLength',
@@ -82,7 +89,8 @@ class HistViewWidget(ExtraViewWidget):
         self.calcRef.histChg = 0
 
     def selectedValue(self):
-        """Return number for selected line"""
+        """Return number for selected line.
+        """
         if self.selectedItems():
             pos = self.indexOfTopLevelItem(self.selectedItems()[0])
             return self.calcRef.history[pos][1]
@@ -90,7 +98,8 @@ class HistViewWidget(ExtraViewWidget):
 
 
 class MemViewWidget(ExtraViewWidget):
-    """Memory list view for ExtraDisplay"""
+    """Memory list view for ExtraDisplay.
+    """
     def __init__(self, calcRef, parent=None):
         ExtraViewWidget.__init__(self, calcRef, parent)
         self.setHeadings(['Num', 'Value'])
@@ -103,13 +112,15 @@ class MemViewWidget(ExtraViewWidget):
         self.updateData()
 
     def updateData(self):
-        """Update with current data"""
+        """Update with current data.
+        """
         for i in range(10):
             self.topLevelItem(i).setText(1, self.calcRef.
                                             formatNum(self.calcRef.mem[i]))
 
     def selectedValue(self):
-        """Return number for selected line"""
+        """Return number for selected line.
+        """
         if self.selectedItems():
             pos = self.indexOfTopLevelItem(self.selectedItems()[0])
             return self.calcRef.mem[pos]
@@ -117,7 +128,8 @@ class MemViewWidget(ExtraViewWidget):
 
 
 class ExtraDisplay(QtGui.QWidget):
-    """Displays registers, history or memory values, allows copies"""
+    """Displays registers, history or memory values, allows copies.
+    """
     def __init__(self, dlgRef, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.dlgRef = dlgRef
@@ -135,25 +147,22 @@ class ExtraDisplay(QtGui.QWidget):
         self.tab.addTab(self.memView, '&Memory')
         self.tab.setFocus()
         topLay.addWidget(self.tab)
-        self.connect(self.tab, QtCore.SIGNAL('currentChanged(int)'),
-                     self.tabUpdate)
+        self.tab.currentChanged.connect(self.tabUpdate)
         buttonLay = QtGui.QHBoxLayout()
         topLay.addLayout(buttonLay)
         setButton = QtGui.QPushButton('&Set\nCalc X')
         buttonLay.addWidget(setButton)
-        self.connect(setButton, QtCore.SIGNAL('clicked()'), self.setXValue)
+        setButton.clicked.connect(self.setXValue)
         allCopyButton = QtGui.QPushButton('Copy\n&Precise')
         buttonLay.addWidget(allCopyButton)
-        self.connect(allCopyButton, QtCore.SIGNAL('clicked()'),
-                     self.copyAllValue)
+        allCopyButton.clicked.connect(self.copyAllValue)
         fixedCopyButton = QtGui.QPushButton('Copy\n&Fixed')
         buttonLay.addWidget(fixedCopyButton)
-        self.connect(fixedCopyButton, QtCore.SIGNAL('clicked()'),
-                     self.copyFixedValue)
+        fixedCopyButton.clicked.connect(self.copyFixedValue)
         self.buttonList = [setButton, allCopyButton, fixedCopyButton]
         closeButton = QtGui.QPushButton('&Close')
         topLay.addWidget(closeButton)
-        self.connect(closeButton, QtCore.SIGNAL('clicked()'), self.close)
+        closeButton.clicked.connect(self.close)
         self.enableControls()
         option = self.dlgRef.calc.option
         xSize = option.intData('ExtraViewXSize', 0, 10000)
@@ -164,51 +173,61 @@ class ExtraDisplay(QtGui.QWidget):
                   option.intData('ExtraViewYPos', 0, 10000))
 
     def tabUpdate(self, index):
-        """Update given tab widget"""
+        """Update given tab widget.
+        """
         self.tab.widget(index).updateData()
         self.enableControls()
 
     def updateData(self):
-        """Update data in current tab"""
+        """Update data in current tab.
+        """
         self.tab.currentWidget().updateData()
         self.enableControls()
 
     def enableControls(self):
-        """Enable or disable buttons depending on content available"""
+        """Enable or disable buttons depending on content available.
+        """
         for button in self.buttonList:
             button.setEnabled(len(self.tab.currentWidget().selectedItems()) >
                                   0)
 
     def setXValue(self):
-        """Copy selected value to calculator X register"""
+        """Copy selected value to calculator X register.
+        """
         self.dlgRef.calc.newXValue(self.tab.currentWidget().selectedValue())
         self.dlgRef.updateLcd()
 
     def copyAllValue(self):
-        """Copy selected value to clipboard"""
-        self.copyToClip('%.15g' % self.tab.currentWidget().selectedValue())
+        """Copy selected value to clipboard.
+        """
+        self.copyToClip('{:.15g}'.format(self.tab.currentWidget().
+                                         selectedValue()))
 
     def copyFixedValue(self):
-        """Copy selected value to clipboard after formatting"""
+        """Copy selected value to clipboard after formatting.
+        """
         self.copyToClip(self.dlgRef.calc.formatNum(self.tab.currentWidget().
                                                    selectedValue()))
 
     def copyToClip(self, text):
-        """Copy text to the clipboard"""
+        """Copy text to the clipboard.
+        """
         clip = QtGui.QApplication.clipboard()
         if clip.supportsSelection():
             clip.setText(text, QtGui.QClipboard.Selection)
         clip.setText(text)
 
     def keyPressEvent(self, keyEvent):
-        """Pass most keypresses to main dialog"""
+        """Pass most keypresses to main dialog.
+        """
         if keyEvent.modifiers == QtCore.Qt.AltModifier:
             QtGui.QWidget.keyPressEvent(self, keyEvent)
         else:
             self.dlgRef.keyPressEvent(keyEvent)
 
     def keyReleaseEvent(self, keyEvent):
-        """Pass most key releases to main dialog"""
+        """Pass most key releases to main dialog.
+        """
         if keyEvent.modifiers == QtCore.Qt.AltModifier:
             QtGui.QWidget.keyReleaseEvent(self, keyEvent)
         else:

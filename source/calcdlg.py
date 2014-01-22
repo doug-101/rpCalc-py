@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #****************************************************************************
 # calcdlg.py, the main dialog view
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2008, Douglas W. Bell
+# Copyright (C) 2014, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -31,7 +31,8 @@ import helpview
 
 
 class CalcDlg(QtGui.QWidget):
-    """Main dialog for calculator program"""
+    """Main dialog for calculator program.
+    """
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.calc = CalcCore()
@@ -176,20 +177,23 @@ class CalcDlg(QtGui.QWidget):
         self.move(self.calc.option.intData('MainDlgXPos', 0, 10000),
                   self.calc.option.intData('MainDlgYPos', 0, 10000))
 
-        self.updateEntryLabel('rpCalc Version %s' % __version__)
+        self.updateEntryLabel('rpCalc Version {0}'.format(__version__))
         QtCore.QTimer.singleShot(5000, self.updateEntryLabel)
 
     def updateEntryLabel(self, subsText=''):
-        """Set entry & status label text, use entryStr or subsText, options"""
-        format = self.calc.option.boolData('ForceSciNotation') and 'sci' \
-                 or 'fix'
+        """Set entry & status label text, use entryStr or subsText, options.
+        """
+        numFormat = self.calc.option.boolData('ForceSciNotation') and 'sci' \
+                    or 'fix'
         decPlcs = self.calc.option.intData('NumDecimalPlaces', 0, 9)
         angle = self.calc.option.strData('AngleUnit')
-        self.statusLabel.setText('%s %s  %s' % (format, decPlcs, angle))
-        self.entryLabel.setText(subsText or '> %s' % self.entryStr)
+        self.statusLabel.setText('{0} {1}  {2}'.format(numFormat, decPlcs,
+                                                       angle))
+        self.entryLabel.setText(subsText or '> {0}'.format(self.entryStr))
 
     def setOptions(self):
-        """Starts option dialog, called by option key"""
+        """Starts option dialog, called by option key.
+        """
         oldViewReg = self.calc.option.boolData('ViewRegisters')
         self.optDlg = optiondlg.OptionDlg(self.calc.option, self)
         self.optDlg.setWindowIcon(icons.iconDict['calc'])
@@ -251,7 +255,8 @@ class CalcDlg(QtGui.QWidget):
         self.optDlg = None
 
     def setLcdHighlight(self):
-        """Set lcd highlight based on option"""
+        """Set lcd highlight based on option.
+        """
         opt = self.calc.option.boolData('HideLcdHighlight') and \
               QtGui.QLCDNumber.Flat or QtGui.QLCDNumber.Filled
         self.lcd.setSegmentStyle(opt)
@@ -259,7 +264,8 @@ class CalcDlg(QtGui.QWidget):
             lcd.setSegmentStyle(opt)
 
     def updateColors(self):
-        """Adjust the colors to the current option settings"""
+        """Adjust the colors to the current option settings.
+        """
         if self.calc.option.boolData('UseDefaultColors'):
             return
         pal = QtGui.QApplication.palette()
@@ -280,7 +286,8 @@ class CalcDlg(QtGui.QWidget):
         QtGui.QApplication.setPalette(pal)
 
     def viewExtra(self, defaultTab=0):
-        """Show extra data view"""
+        """Show extra data view.
+        """
         if self.optDlg:
             self.optDlg.reject()   # unfortunately necessary?
         if not self.extraView:
@@ -290,26 +297,31 @@ class CalcDlg(QtGui.QWidget):
         self.extraView.show()
 
     def viewReg(self):
-        """Show extra data view with register tab open"""
+        """Show extra data view with register tab open.
+        """
         self.viewExtra(0)
 
     def viewHist(self):
-        """Show extra data view with history tab open"""
+        """Show extra data view with history tab open.
+        """
         self.viewExtra(1)
 
     def viewMem(self):
-        """Show extra data view with memory tab open"""
+        """Show extra data view with memory tab open.
+        """
         self.viewExtra(2)
 
     def updateExtra(self):
-        """Update current extra and alt base views"""
+        """Update current extra and alt base views.
+        """
         if self.extraView and self.extraView.isVisible():
             self.extraView.updateData()
         if self.altBaseView:
             self.altBaseView.updateData()
 
     def toggleReg(self):
-        """Toggle register display on LCD"""
+        """Toggle register display on LCD.
+        """
         viewReg = not self.calc.option.boolData('ViewRegisters')
         self.calc.option.changeData('ViewRegisters',
                                     viewReg and 'yes' or 'no', 1)
@@ -323,7 +335,8 @@ class CalcDlg(QtGui.QWidget):
         self.calc.updateXStr()
 
     def viewAltBases(self):
-        """Show alternate base view"""
+        """Show alternate base view.
+        """
         if self.optDlg:
             self.optDlg.reject()   # unfortunately necessary?
         if not self.altBaseView:
@@ -332,7 +345,8 @@ class CalcDlg(QtGui.QWidget):
         self.altBaseView.show()
 
     def findHelpFile(self):
-        """Return the path to the help file"""
+        """Return the path to the help file.
+        """
         modPath = os.path.abspath(sys.path[0])
         pathList = [helpFilePath, os.path.join(modPath, '../doc/'),
                     modPath, 'doc/']
@@ -340,15 +354,16 @@ class CalcDlg(QtGui.QWidget):
             if path:
                 try:
                     fullPath = os.path.join(path, 'README.html')
-                    f = file(fullPath, 'r')
-                    f.close()
+                    with open(fullPath, 'r', encoding='utf-8') as f:
+                        pass
                     return fullPath
                 except IOError:
                     pass
         return ''
 
     def help(self):
-        """View the ReadMe file"""
+        """View the ReadMe file.
+        """
         if self.optDlg:
             self.optDlg.reject()   # unfortunately necessary?
         if not self.helpView:
@@ -363,29 +378,31 @@ class CalcDlg(QtGui.QWidget):
         self.helpView.show()
 
     def about(self):
-        """About this program"""
+        """About this program.
+        """
         QtGui.QMessageBox.about(self, 'rpCalc',
-                                'rpCalc, Version %s\n by %s' %
-                                (__version__, __author__))
+                                'rpCalc, Version {0}\n by {0}'.
+                                format(__version__, __author__))
 
     def addCmdButton(self, text, row, col):
-        """Adds a CalcButton for command functions"""
+        """Adds a CalcButton for command functions.
+        """
         button = CalcButton(text)
         self.cmdDict[text.upper()] = button
         self.cmdLay.addWidget(button, row, col)
-        self.connect(button, QtCore.SIGNAL('activated(QString &)'),
-                     self.issueCmd)
+        button.activated.connect(self.issueCmd)
 
     def addMainButton(self, key, text, row, col, extraRow=0, extraCol=0):
-        """Adds a CalcButton for number and 4-function keys"""
+        """Adds a CalcButton for number and 4-function keys.
+        """
         button = CalcButton(text)
         self.mainDict[key] = button
         self.mainLay.addWidget(button, row, col, 1+extraRow, 1+extraCol)
-        self.connect(button, QtCore.SIGNAL('activated(QString &)'),
-                     self.issueCmd)
+        button.activated.connect(self.issueCmd)
 
     def updateLcd(self):
-        """Sets display back to CalcCore string"""
+        """Sets display back to CalcCore string.
+        """
         numDigits = int(self.calc.option.numData('NumDecimalPlaces', 0, 9)) + 9
         if self.calc.option.boolData('ThousandsSeparator') or \
                 self.calc.option.boolData('UseEngNotation'):
@@ -398,7 +415,8 @@ class CalcDlg(QtGui.QWidget):
         self.updateExtra()
 
     def issueCmd(self, text):
-        """Sends command text to CalcCore - connected to button signals"""
+        """Sends command text to CalcCore - connected to button signals.
+        """
         mode = self.calc.flag
         text = str(text).upper()
         if text == 'OPT':
@@ -421,7 +439,8 @@ class CalcDlg(QtGui.QWidget):
         self.updateLcd()
 
     def textEntry(self, ch):
-        """Searches for button match from text entry"""
+        """Searches for button match from text entry.
+        """
         if not ch:
             return False
         if ord(ch) == 8:   # backspace key
@@ -460,7 +479,8 @@ class CalcDlg(QtGui.QWidget):
         return True
 
     def keyPressEvent(self, keyEvent):
-        """Event handler for keys - checks for numbers and typed commands"""
+        """Event handler for keys - checks for numbers and typed commands.
+        """
         button = self.mainDict.get(keyEvent.key())
         if not self.entryStr and button:
             button.clickEvent()
@@ -494,13 +514,15 @@ class CalcDlg(QtGui.QWidget):
             QtGui.QWidget.keyPressEvent(self, keyEvent)
 
     def keyReleaseEvent(self, keyEvent):
-        """Event handler for keys - sets button back to raised position"""
+        """Event handler for keys - sets button back to raised position.
+        """
         button = self.mainDict.get(keyEvent.key())
         if not self.entryStr and button:
             button.setDown(False)
 
     def closeEvent(self, event):
-        """Saves the stack prior to closing"""
+        """Saves the stack prior to closing.
+        """
         self.calc.saveStack()
         self.calc.option.changeData('MainDlgXSize', self.width(), True)
         self.calc.option.changeData('MainDlgYSize', self.height(), True)

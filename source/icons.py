@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #****************************************************************************
 # icons.py, provides xpm icons
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2006, Douglas W. Bell
+# Copyright (C) 2014, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -100,7 +100,8 @@ iconList = ['calc', 'helpback', 'helpforward', 'helphome']
 iconDict = {}
 
 def setupIcons():
-    """Create icons from xpm data"""
+    """Create icons from xpm data.
+        """
     global iconDict
     for name in iconList:
         iconDict[name] = QtGui.QIcon(QtGui.QPixmap(globals()[name]))

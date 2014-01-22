@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #****************************************************************************
 # helpview.py, provides a window for viewing an html help file
 #
-# Copyright (C) 2006, Douglas W. Bell
+# Copyright (C) 2014, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -18,9 +18,11 @@ from PyQt4 import QtCore, QtGui
 
 
 class HelpView(QtGui.QMainWindow):
-    """Main window for viewing an html help file"""
+    """Main window for viewing an html help file.
+    """
     def __init__(self, path, caption, icons, parent=None):
-        """Helpview initialize with text"""
+        """Helpview initialize with text.
+        """
         QtGui.QMainWindow.__init__(self, parent)
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowFlags(QtCore.Qt.Window)
@@ -31,54 +33,50 @@ class HelpView(QtGui.QMainWindow):
         if sys.platform.startswith('win'):
             path = path.replace('\\', '/')
         self.textView.setSearchPaths([os.path.dirname(path)])
-        self.textView.setSource(QtCore.QUrl('file:///%s' % path))
+        self.textView.setSource(QtCore.QUrl('file:///{0}'.format(path)))
         self.resize(520, 440)
         self.setWindowTitle(caption)
         tools = self.addToolBar('Tools')
         self.menu = QtGui.QMenu(self.textView)
-        self.connect(self.textView,
-                     QtCore.SIGNAL('highlighted(const QString&)'),
-                     self.showLink)
+        self.textView.highlighted[str].connect(self.showLink)
 
         backAct = QtGui.QAction('&Back', self)
         backAct.setIcon(icons['helpback'])
         tools.addAction(backAct)
         self.menu.addAction(backAct)
-        self.connect(backAct, QtCore.SIGNAL('triggered()'),
-                     self.textView, QtCore.SLOT('backward()'))
+        backAct.triggered.connect(self.textView.backward)
         backAct.setEnabled(False)
-        self.connect(self.textView, QtCore.SIGNAL('backwardAvailable(bool)'),
-                     backAct, QtCore.SLOT('setEnabled(bool)'))
+        self.textView.backwardAvailable.connect(backAct.setEnabled)
 
         forwardAct = QtGui.QAction('&Forward', self)
         forwardAct.setIcon(icons['helpforward'])
         tools.addAction(forwardAct)
         self.menu.addAction(forwardAct)
-        self.connect(forwardAct, QtCore.SIGNAL('triggered()'),
-                     self.textView, QtCore.SLOT('forward()'))
+        forwardAct.triggered.connect(self.textView.forward)
         forwardAct.setEnabled(False)
-        self.connect(self.textView, QtCore.SIGNAL('forwardAvailable(bool)'),
-                     forwardAct, QtCore.SLOT('setEnabled(bool)'))
+        self.textView.forwardAvailable.connect(forwardAct.setEnabled)
 
         homeAct = QtGui.QAction('&Home', self)
         homeAct.setIcon(icons['helphome'])
         tools.addAction(homeAct)
         self.menu.addAction(homeAct)
-        self.connect(homeAct, QtCore.SIGNAL('triggered()'),
-                     self.textView, QtCore.SLOT('home()'))
+        homeAct.triggered.connect(self.textView.home)
 
     def showLink(self, text):
-        """Send link text to the statusbar"""
+        """Send link text to the statusbar.
+        """
         self.statusBar().showMessage(text)
 
 
 class HelpViewer(QtGui.QTextBrowser):
-    """Shows an html help file"""
+    """Shows an html help file.
+    """
     def __init__(self, parent=None):
         QtGui.QTextBrowser.__init__(self, parent)
 
     def setSource(self, url):
-        """Called when user clicks on a URL"""
+        """Called when user clicks on a URL.
+        """
         name = url.toString()
         if name.startswith('http'):
             webbrowser.open(name, True)
@@ -86,5 +84,6 @@ class HelpViewer(QtGui.QTextBrowser):
             QtGui.QTextBrowser.setSource(self, QtCore.QUrl(name))
 
     def contextMenuEvent(self, event):
-        """Init popup menu on right click"""""
+        """Init popup menu on right click"".
+        """
         self.parentWidget().menu.exec_(event.globalPos())
