@@ -16,17 +16,18 @@ import sys
 import os.path
 from PyQt4 import QtCore, QtGui
 try:
-    from __main__ import __version__, __author__, helpFilePath
+    from __main__ import __version__, __author__, helpFilePath, iconPath
 except ImportError:
     __version__ = __author__ = '??'
     helpFilePath = None
+    iconPath = None
 from calccore import CalcCore, Mode
 from calclcd import Lcd, LcdBox
 from calcbutton import CalcButton
 import extradisplay
 import altbasedialog
 import optiondlg
-import icons
+import icondict
 import helpview
 
 
@@ -37,8 +38,18 @@ class CalcDlg(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.calc = CalcCore()
         self.setWindowTitle('rpCalc')
-        icons.setupIcons()
-        self.setWindowIcon(icons.iconDict['calc'])
+        modPath = os.path.abspath(sys.path[0])
+        if modPath.endswith('.zip'):  # for py2exe
+            modPath = os.path.dirname(modPath)
+        iconPathList = [iconPath, os.path.join(modPath, 'icons/'),
+                         os.path.join(modPath, '../icons')]
+        self.icons = icondict.IconDict()
+        self.icons.addIconPath(filter(None, iconPathList))
+        self.icons.addIconPath([path for path in iconPathList if path])
+        try:
+            QtGui.QApplication.setWindowIcon(self.icons['calc_lg'])
+        except KeyError:
+            pass
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.helpView = None
         self.extraView = None
@@ -196,7 +207,6 @@ class CalcDlg(QtGui.QWidget):
         """
         oldViewReg = self.calc.option.boolData('ViewRegisters')
         self.optDlg = optiondlg.OptionDlg(self.calc.option, self)
-        self.optDlg.setWindowIcon(icons.iconDict['calc'])
         self.optDlg.startGroupBox('Startup', 8)
         optiondlg.OptionDlgBool(self.optDlg, 'SaveStacks',
                                 'Save previous entries')
@@ -373,8 +383,7 @@ class CalcDlg(QtGui.QWidget):
                                           'Read Me file not found')
                 return
             self.helpView = helpview.HelpView(path, 'rpCalc README File',
-                                              icons.iconDict)
-            self.helpView.setWindowIcon(icons.iconDict['calc'])
+                                              self.icons)
         self.helpView.show()
 
     def about(self):

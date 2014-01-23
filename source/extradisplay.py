@@ -13,7 +13,6 @@
 #*****************************************************************************
 
 from PyQt4 import QtCore, QtGui
-import icons
 
 
 class ExtraViewWidget(QtGui.QTreeWidget):
@@ -135,7 +134,6 @@ class ExtraDisplay(QtGui.QWidget):
         self.dlgRef = dlgRef
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Extra Data')
-        self.setWindowIcon(icons.iconDict['calc'])
         topLay = QtGui.QVBoxLayout(self)
         self.setLayout(topLay)
         self.tab = QtGui.QTabWidget()

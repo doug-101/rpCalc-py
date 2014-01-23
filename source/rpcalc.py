@@ -18,6 +18,7 @@ __version__ = '0.7.0'
 __author__ = 'Doug Bell'
 
 helpFilePath = None    # modified by install script if required
+iconPath = None        # modified by install script if required
 
 import sys
 from PyQt4 import QtGui

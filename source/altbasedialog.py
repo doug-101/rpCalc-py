@@ -14,7 +14,6 @@
 
 from PyQt4 import QtCore, QtGui
 import calccore
-import icons
 
 class AltBaseDialog(QtGui.QWidget):
     """Displays edit boxes for other number bases.
@@ -26,7 +25,6 @@ class AltBaseDialog(QtGui.QWidget):
         self.prevBase = None   # revert to prevBase after temp base change
         self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Alternate Bases')
-        self.setWindowIcon(icons.iconDict['calc'])
         topLay = QtGui.QVBoxLayout(self)
         self.setLayout(topLay)
         mainLay = QtGui.QGridLayout()
