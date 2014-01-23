@@ -383,7 +383,7 @@ class CalcDlg(QtGui.QWidget):
                                           'Read Me file not found')
                 return
             self.helpView = helpview.HelpView(path, 'rpCalc README File',
-                                              self.icons)
+                                              self.icons, self)
         self.helpView.show()
 
     def about(self):
