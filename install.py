@@ -246,8 +246,8 @@ def main():
         copyDir('doc', docBuildDir)
         # update help file location in main python script
         replaceLine(os.path.join(pythonBuildDir, '{0}.py'.format(progName)),
-                    'docPath = None',
-                    'docPath = \'{0}\'   # modified by install script\n'
+                    'helpFilePath = None',
+                    'helpFilePath = \'{0}\'   # modified by install script\n'
                     .format(docPrefixDir))
     if os.path.isdir('data'):
         dataPrefixDir = os.path.join(prefixDir, 'share', progName)
