@@ -39,8 +39,8 @@ class CalcDlg(QtGui.QWidget):
         self.calc = CalcCore()
         self.setWindowTitle('rpCalc')
         modPath = os.path.abspath(sys.path[0])
-        if modPath.endswith('.zip'):  # for py2exe
-            modPath = os.path.dirname(modPath)
+        if modPath.endswith('.zip') or modPath.endswith('.exe'):
+            modPath = os.path.dirname(modPath)  # for py2exe/cx_freeze
         iconPathList = [iconPath, os.path.join(modPath, 'icons/'),
                          os.path.join(modPath, '../icons')]
         self.icons = icondict.IconDict()
@@ -358,6 +358,8 @@ class CalcDlg(QtGui.QWidget):
         """Return the path to the help file.
         """
         modPath = os.path.abspath(sys.path[0])
+        if modPath.endswith('.zip') or modPath.endswith('.exe'):
+            modPath = os.path.dirname(modPath)  # for py2exe/cx_freeze
         pathList = [helpFilePath, os.path.join(modPath, '../doc/'),
                     modPath, 'doc/']
         for path in pathList:

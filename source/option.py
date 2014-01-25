@@ -31,6 +31,8 @@ class Option:
             self.path = os.path.join(userPath, fileName)
             if not os.path.exists(self.path):
                 modPath = os.path.abspath(sys.path[0])
+                if modPath.endswith('.zip') or modPath.endswith('.exe'):
+                    modPath = os.path.dirname(modPath)  # for py2exe/cx_freeze
                 self.path = os.path.join(modPath, fileName)
                 if not os.access(self.path, os.W_OK):
                     self.path = os.path.join(userPath, fileName)
