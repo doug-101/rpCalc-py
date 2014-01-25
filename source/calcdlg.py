@@ -67,7 +67,7 @@ class CalcDlg(QtGui.QWidget):
         self.popupMenu.addSeparator()
         self.popupMenu.addAction('Show Other &Bases', self.viewAltBases)
         self.popupMenu.addSeparator()
-        self.popupMenu.addAction('Show ReadMe &File', self.help)
+        self.popupMenu.addAction('Show Help &File', self.help)
         self.popupMenu.addAction('&About rpCalc', self.about)
         self.popupMenu.addSeparator()
         self.popupMenu.addAction('&Quit', self.close)
@@ -242,7 +242,7 @@ class CalcDlg(QtGui.QWidget):
         optiondlg.OptionDlgPush(self.optDlg, 'View Extra Data', self.viewExtra)
         optiondlg.OptionDlgPush(self.optDlg, 'View Other Bases',
                                 self.viewAltBases)
-        optiondlg.OptionDlgPush(self.optDlg, 'View ReadMe file', self.help)
+        optiondlg.OptionDlgPush(self.optDlg, 'View Help file', self.help)
         optiondlg.OptionDlgInt(self.optDlg, 'MaxHistLength',
                                'Saved history steps', CalcCore.minMaxHist,
                                CalcCore.maxMaxHist, True, 10)
@@ -390,7 +390,7 @@ class CalcDlg(QtGui.QWidget):
         """About this program.
         """
         QtGui.QMessageBox.about(self, 'rpCalc',
-                                'rpCalc, Version {0}\n by {0}'.
+                                'rpCalc, Version {0}\n by {1}'.
                                 format(__version__, __author__))
 
     def addCmdButton(self, text, row, col):

@@ -21,6 +21,7 @@ Name: "startmenu"; Description: "Add start menu shortcuts"
 Name: "deskicon"; Description: "Add a desktop shortcut"
 Name: "adduninstall"; Description: "Create an uninstaller"
 Name: "source"; Description: "Include source code"
+Name: "portable"; Description: "Use portable config file"; Flags: unchecked
 
 [Files]
 Source: "rpcalc.exe"; DestDir: "{app}"
@@ -33,6 +34,7 @@ Source: "icons\*.png"; DestDir: "{app}\icons"
 Source: "source\*.py"; DestDir: "{app}\source"; Tasks: "source"
 Source: "rpcalc.ico"; DestDir: "{app}"; Tasks: "source"
 Source: "*.iss"; DestDir: "{app}"; Tasks: "source"
+Source: "rpcalc.ini"; DestDir: "{app}"; Tasks: "portable"
 
 [Icons]
 Name: "{userstartmenu}\rpCalc"; Filename: "{app}\rpcalc.exe"; \
