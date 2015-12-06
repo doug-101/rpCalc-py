@@ -4,7 +4,7 @@
  rpcalc.py, the main program file
 
  rpCalc, an RPN calculator
- Copyright (C) 2014, Douglas W. Bell
+ Copyright (C) 2015, Douglas W. Bell
 
  This is free software; you can redistribute it and/or modify it under the
  terms of the GNU General Public License, either Version 2 or any later
@@ -14,7 +14,7 @@
 """
 
 __progname__ = 'rpCalc'
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 __author__ = 'Doug Bell'
 
 helpFilePath = None    # modified by install script if required

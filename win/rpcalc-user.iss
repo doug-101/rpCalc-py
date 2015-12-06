@@ -5,12 +5,12 @@
 
 [Setup]
 AppName=rpCalc
-AppVersion=0.7.0
+AppVersion=0.7.1
 DefaultDirName={userappdata}\rpCalc
 DefaultGroupName=rpCalc
 DisableProgramGroupPage=yes
 OutputDir=.
-OutputBaseFilename=rpcalc-0.7.0-install-user
+OutputBaseFilename=rpcalc-0.7.1-install-user
 PrivilegesRequired=lowest
 SetupIconFile=rpcalc.ico
 Uninstallable=IsTaskSelected('adduninstall')

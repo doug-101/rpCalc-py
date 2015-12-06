@@ -11,7 +11,7 @@
 # subdirectory that contains the files needed to run the application
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2015, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -37,5 +37,6 @@ setup(name = 'rpcalc',
                                'include_files': extraFiles,
                                'excludes': ['*.pyc'],
                                'icon': '../win/rpcalc.ico',
+                               'include_msvcr': True,
                                'build_exe': '../../rpCalc-0.7'}},
       executables = [Executable('rpcalc.py', base=base)])
