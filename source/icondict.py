@@ -3,7 +3,7 @@
 #****************************************************************************
 # icondict.py, provides a class to load and store icons
 #
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2017, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -12,7 +12,7 @@
 #*****************************************************************************
 
 import os.path
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtGui import (QIcon, QPixmap)
 
 class IconDict(dict):
     """Stores icons by name, loads on demand.
@@ -28,7 +28,7 @@ class IconDict(dict):
         for path in potentialPaths:
             try:
                 for name in os.listdir(path):
-                    pixmap = QtGui.QPixmap(os.path.join(path, name))
+                    pixmap = QPixmap(os.path.join(path, name))
                     if not pixmap.isNull():
                         self.pathList.append(path)
                         return
@@ -53,13 +53,13 @@ class IconDict(dict):
         for path in self.pathList:
             try:
                 for name in os.listdir(path):
-                    pixmap = QtGui.QPixmap(os.path.join(path, name))
+                    pixmap = QPixmap(os.path.join(path, name))
                     if not pixmap.isNull():
                         name = os.path.splitext(name)[0]
                         try:
                             icon = self[name]
                         except KeyError:
-                            icon = QtGui.QIcon()
+                            icon = QIcon()
                             self[name] = icon
                         icon.addPixmap(pixmap)
             except OSError:
@@ -68,11 +68,11 @@ class IconDict(dict):
     def loadIcon(self, iconName):
         """Load icon from iconPath, add to dictionary and return the icon.
         """
-        icon = QtGui.QIcon()
+        icon = QIcon()
         for path in self.pathList:
             for ext in IconDict.iconExt:
                 fileName = iconName + ext
-                pixmap = QtGui.QPixmap(os.path.join(path, fileName))
+                pixmap = QPixmap(os.path.join(path, fileName))
                 if not pixmap.isNull():
                     icon.addPixmap(pixmap)
                 if not icon.isNull():

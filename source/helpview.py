@@ -3,7 +3,7 @@
 #****************************************************************************
 # helpview.py, provides a window for viewing an html help file
 #
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2017, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -14,33 +14,36 @@
 import os.path
 import sys
 import webbrowser
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtCore import (QUrl, Qt)
+from PyQt5.QtGui import QTextDocument
+from PyQt5.QtWidgets import (QAction, QLabel, QLineEdit, QMainWindow, QMenu,
+                             QStatusBar, QTextBrowser)
 
 
-class HelpView(QtGui.QMainWindow):
+class HelpView(QMainWindow):
     """Main window for viewing an html help file.
     """
     def __init__(self, path, caption, icons, parent=None):
         """Helpview initialize with text.
         """
-        QtGui.QMainWindow.__init__(self, parent)
-        self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
-        self.setWindowFlags(QtCore.Qt.Window)
-        self.setStatusBar(QtGui.QStatusBar())
+        QMainWindow.__init__(self, parent)
+        self.setAttribute(Qt.WA_QuitOnClose, False)
+        self.setWindowFlags(Qt.Window)
+        self.setStatusBar(QStatusBar())
         self.textView = HelpViewer(self)
         self.setCentralWidget(self.textView)
         path = os.path.abspath(path)
         if sys.platform.startswith('win'):
             path = path.replace('\\', '/')
         self.textView.setSearchPaths([os.path.dirname(path)])
-        self.textView.setSource(QtCore.QUrl('file:///{0}'.format(path)))
+        self.textView.setSource(QUrl('file:///{0}'.format(path)))
         self.resize(520, 440)
         self.setWindowTitle(caption)
         tools = self.addToolBar('Tools')
-        self.menu = QtGui.QMenu(self.textView)
+        self.menu = QMenu(self.textView)
         self.textView.highlighted[str].connect(self.showLink)
 
-        backAct = QtGui.QAction('&Back', self)
+        backAct = QAction('&Back', self)
         backAct.setIcon(icons['helpback'])
         tools.addAction(backAct)
         self.menu.addAction(backAct)
@@ -48,7 +51,7 @@ class HelpView(QtGui.QMainWindow):
         backAct.setEnabled(False)
         self.textView.backwardAvailable.connect(backAct.setEnabled)
 
-        forwardAct = QtGui.QAction('&Forward', self)
+        forwardAct = QAction('&Forward', self)
         forwardAct.setIcon(icons['helpforward'])
         tools.addAction(forwardAct)
         self.menu.addAction(forwardAct)
@@ -56,7 +59,7 @@ class HelpView(QtGui.QMainWindow):
         forwardAct.setEnabled(False)
         self.textView.forwardAvailable.connect(forwardAct.setEnabled)
 
-        homeAct = QtGui.QAction('&Home', self)
+        homeAct = QAction('&Home', self)
         homeAct.setIcon(icons['helphome'])
         tools.addAction(homeAct)
         self.menu.addAction(homeAct)
@@ -64,21 +67,21 @@ class HelpView(QtGui.QMainWindow):
 
         tools.addSeparator()
         tools.addSeparator()
-        findLabel = QtGui.QLabel(' Find: ', self)
+        findLabel = QLabel(' Find: ', self)
         tools.addWidget(findLabel)
-        self.findEdit = QtGui.QLineEdit(self)
+        self.findEdit = QLineEdit(self)
         tools.addWidget(self.findEdit)
         self.findEdit.textEdited.connect(self.findTextChanged)
         self.findEdit.returnPressed.connect(self.findNext)
 
-        self.findPreviousAct = QtGui.QAction('Find &Previous', self)
+        self.findPreviousAct = QAction('Find &Previous', self)
         self.findPreviousAct.setIcon(icons['helpprevious'])
         tools.addAction(self.findPreviousAct)
         self.menu.addAction(self.findPreviousAct)
         self.findPreviousAct.triggered.connect(self.findPrevious)
         self.findPreviousAct.setEnabled(False)
 
-        self.findNextAct = QtGui.QAction('Find &Next', self)
+        self.findNextAct = QAction('Find &Next', self)
         self.findNextAct.setIcon(icons['helpnext'])
         tools.addAction(self.findNextAct)
         self.menu.addAction(self.findNextAct)
@@ -100,7 +103,7 @@ class HelpView(QtGui.QMainWindow):
         """Command to find the previous string.
         """
         if self.textView.find(self.findEdit.text(),
-                              QtGui.QTextDocument.FindBackward):
+                              QTextDocument.FindBackward):
             self.statusBar().clearMessage()
         else:
             self.statusBar().showMessage('Text string not found')
@@ -114,11 +117,11 @@ class HelpView(QtGui.QMainWindow):
             self.statusBar().showMessage('Text string not found')
 
 
-class HelpViewer(QtGui.QTextBrowser):
+class HelpViewer(QTextBrowser):
     """Shows an html help file.
     """
     def __init__(self, parent=None):
-        QtGui.QTextBrowser.__init__(self, parent)
+        QTextBrowser.__init__(self, parent)
 
     def setSource(self, url):
         """Called when user clicks on a URL.
@@ -127,7 +130,7 @@ class HelpViewer(QtGui.QTextBrowser):
         if name.startswith('http'):
             webbrowser.open(name, True)
         else:
-            QtGui.QTextBrowser.setSource(self, QtCore.QUrl(name))
+            QTextBrowser.setSource(self, QUrl(name))
 
     def contextMenuEvent(self, event):
         """Init popup menu on right click"".

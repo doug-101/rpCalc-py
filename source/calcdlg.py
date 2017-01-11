@@ -4,7 +4,7 @@
 # calcdlg.py, the main dialog view
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2017, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -14,7 +14,12 @@
 
 import sys
 import os.path
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtCore import (QPoint, QTimer, Qt)
+from PyQt5.QtGui import (QColor, QPalette)
+from PyQt5.QtWidgets import (QApplication, QDialog, QFrame, QGridLayout,
+                             QHBoxLayout, QLCDNumber, QLabel, QMenu,
+                             QMessageBox, QSizePolicy, QVBoxLayout, QWidget,
+                             qApp)
 try:
     from __main__ import __version__, __author__, helpFilePath, iconPath
 except ImportError:
@@ -31,11 +36,11 @@ import icondict
 import helpview
 
 
-class CalcDlg(QtGui.QWidget):
+class CalcDlg(QWidget):
     """Main dialog for calculator program.
     """
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.calc = CalcCore()
         self.setWindowTitle('rpCalc')
         modPath = os.path.abspath(sys.path[0])
@@ -47,10 +52,10 @@ class CalcDlg(QtGui.QWidget):
         self.icons.addIconPath(filter(None, iconPathList))
         self.icons.addIconPath([path for path in iconPathList if path])
         try:
-            QtGui.QApplication.setWindowIcon(self.icons['calc_lg'])
+            QApplication.setWindowIcon(self.icons['calc_lg'])
         except KeyError:
             pass
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setFocusPolicy(Qt.StrongFocus)
         self.helpView = None
         self.extraView = None
         self.regView = None
@@ -58,7 +63,7 @@ class CalcDlg(QtGui.QWidget):
         self.memView = None
         self.altBaseView = None
         self.optDlg = None
-        self.popupMenu = QtGui.QMenu(self)
+        self.popupMenu = QMenu(self)
         self.popupMenu.addAction('Registers on &LCD', self.toggleReg)
         self.popupMenu.addSeparator()
         self.popupMenu.addAction('Show &Register List', self.viewReg)
@@ -71,33 +76,33 @@ class CalcDlg(QtGui.QWidget):
         self.popupMenu.addAction('&About rpCalc', self.about)
         self.popupMenu.addSeparator()
         self.popupMenu.addAction('&Quit', self.close)
-        topLay = QtGui.QVBoxLayout(self)
+        topLay = QVBoxLayout(self)
         self.setLayout(topLay)
         topLay.setSpacing(4)
-        topLay.setMargin(6)
+        topLay.setContentsMargins(6, 6, 6, 6)
         lcdBox = LcdBox()
         topLay.addWidget(lcdBox)
-        lcdLay = QtGui.QGridLayout(lcdBox)
+        lcdLay = QGridLayout(lcdBox)
         lcdLay.setColumnStretch(1, 1)
         lcdLay.setRowStretch(3, 1)
-        self.extraLabels = [QtGui.QLabel(' T:',), QtGui.QLabel(' Z:',),
-                            QtGui.QLabel(' Y:',)]
+        self.extraLabels = [QLabel(' T:',), QLabel(' Z:',),
+                            QLabel(' Y:',)]
         for i in range(3):
-            lcdLay.addWidget(self.extraLabels[i], i, 0, QtCore.Qt.AlignLeft)
+            lcdLay.addWidget(self.extraLabels[i], i, 0, Qt.AlignLeft)
         self.extraLcds = [Lcd(1.5, 13), Lcd(1.5, 13), Lcd(1.5, 13)]
-        lcdLay.addWidget(self.extraLcds[2], 0, 1, QtCore.Qt.AlignRight)
-        lcdLay.addWidget(self.extraLcds[1], 1, 1, QtCore.Qt.AlignRight)
-        lcdLay.addWidget(self.extraLcds[0], 2, 1, QtCore.Qt.AlignRight)
+        lcdLay.addWidget(self.extraLcds[2], 0, 1, Qt.AlignRight)
+        lcdLay.addWidget(self.extraLcds[1], 1, 1, Qt.AlignRight)
+        lcdLay.addWidget(self.extraLcds[0], 2, 1, Qt.AlignRight)
         if not self.calc.option.boolData('ViewRegisters'):
             for w in self.extraLabels + self.extraLcds:
                 w.hide()
         self.lcd = Lcd(2.0, 13)
-        lcdLay.addWidget(self.lcd, 3, 0, 1, 2, QtCore.Qt.AlignRight)
+        lcdLay.addWidget(self.lcd, 3, 0, 1, 2, Qt.AlignRight)
         self.setLcdHighlight()
         self.updateLcd()
         self.updateColors()
 
-        self.cmdLay = QtGui.QGridLayout()
+        self.cmdLay = QGridLayout()
         topLay.addLayout(self.cmdLay)
         self.cmdDict = {}
         self.addCmdButton('x^2', 0, 0)
@@ -131,49 +136,49 @@ class CalcDlg(QtGui.QWidget):
         self.addCmdButton('CHS', 5, 3)
         self.addCmdButton('<-', 5, 4)
 
-        self.mainLay = QtGui.QGridLayout()
+        self.mainLay = QGridLayout()
         topLay.addLayout(self.mainLay)
         self.mainDict = {}
         self.addMainButton(0, 'OPT', 0, 0)
-        self.addMainButton(QtCore.Qt.Key_Slash, '/', 0, 1)
-        self.addMainButton(QtCore.Qt.Key_Asterisk, '*', 0, 2)
-        self.addMainButton(QtCore.Qt.Key_Minus, '-', 0, 3)
-        self.addMainButton(QtCore.Qt.Key_7, '7', 1, 0)
-        self.addMainButton(QtCore.Qt.Key_8, '8', 1, 1)
-        self.addMainButton(QtCore.Qt.Key_9, '9', 1, 2)
-        self.addMainButton(QtCore.Qt.Key_Plus, '+', 1, 3, 1, 0)
-        self.addMainButton(QtCore.Qt.Key_4, '4', 2, 0)
-        self.addMainButton(QtCore.Qt.Key_5, '5', 2, 1)
-        self.addMainButton(QtCore.Qt.Key_6, '6', 2, 2)
-        self.addMainButton(QtCore.Qt.Key_1, '1', 3, 0)
-        self.addMainButton(QtCore.Qt.Key_2, '2', 3, 1)
-        self.addMainButton(QtCore.Qt.Key_3, '3', 3, 2)
-        self.addMainButton(QtCore.Qt.Key_Enter, 'ENT', 3, 3, 1, 0)
-        self.addMainButton(QtCore.Qt.Key_0, '0', 4, 0, 0, 1)
-        self.addMainButton(QtCore.Qt.Key_Period, '.', 4, 2)
+        self.addMainButton(Qt.Key_Slash, '/', 0, 1)
+        self.addMainButton(Qt.Key_Asterisk, '*', 0, 2)
+        self.addMainButton(Qt.Key_Minus, '-', 0, 3)
+        self.addMainButton(Qt.Key_7, '7', 1, 0)
+        self.addMainButton(Qt.Key_8, '8', 1, 1)
+        self.addMainButton(Qt.Key_9, '9', 1, 2)
+        self.addMainButton(Qt.Key_Plus, '+', 1, 3, 1, 0)
+        self.addMainButton(Qt.Key_4, '4', 2, 0)
+        self.addMainButton(Qt.Key_5, '5', 2, 1)
+        self.addMainButton(Qt.Key_6, '6', 2, 2)
+        self.addMainButton(Qt.Key_1, '1', 3, 0)
+        self.addMainButton(Qt.Key_2, '2', 3, 1)
+        self.addMainButton(Qt.Key_3, '3', 3, 2)
+        self.addMainButton(Qt.Key_Enter, 'ENT', 3, 3, 1, 0)
+        self.addMainButton(Qt.Key_0, '0', 4, 0, 0, 1)
+        self.addMainButton(Qt.Key_Period, '.', 4, 2)
 
-        self.mainDict[QtCore.Qt.Key_Return] = \
-                     self.mainDict[QtCore.Qt.Key_Enter]
+        self.mainDict[Qt.Key_Return] = \
+                     self.mainDict[Qt.Key_Enter]
         # added for european keyboards:
-        self.mainDict[QtCore.Qt.Key_Comma] = \
-                     self.mainDict[QtCore.Qt.Key_Period]
-        self.cmdDict['ENT'] = self.mainDict[QtCore.Qt.Key_Enter]
+        self.mainDict[Qt.Key_Comma] = \
+                     self.mainDict[Qt.Key_Period]
+        self.cmdDict['ENT'] = self.mainDict[Qt.Key_Enter]
         self.cmdDict['OPT'] = self.mainDict[0]
 
         self.entryStr = ''
         self.showMode = False
 
-        statusBox = QtGui.QFrame()
-        statusBox.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken)
-        statusBox.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                  QtGui.QSizePolicy.Preferred))
+        statusBox = QFrame()
+        statusBox.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+        statusBox.setSizePolicy(QSizePolicy(QSizePolicy.Preferred,
+                                                  QSizePolicy.Preferred))
         topLay.addWidget(statusBox)
-        statusLay = QtGui.QHBoxLayout(statusBox)
-        self.entryLabel = QtGui.QLabel(statusBox)
+        statusLay = QHBoxLayout(statusBox)
+        self.entryLabel = QLabel(statusBox)
         statusLay.addWidget(self.entryLabel)
-        statusLay.setMargin(1)
-        self.statusLabel = QtGui.QLabel(statusBox)
-        self.statusLabel.setAlignment(QtCore.Qt.AlignRight)
+        statusLay.setContentsMargins(1, 1, 1, 1)
+        self.statusLabel = QLabel(statusBox)
+        self.statusLabel.setAlignment(Qt.AlignRight)
         statusLay.addWidget(self.statusLabel)
 
         if self.calc.option.boolData('ExtraViewStartup'):
@@ -189,7 +194,7 @@ class CalcDlg(QtGui.QWidget):
                   self.calc.option.intData('MainDlgYPos', 0, 10000))
 
         self.updateEntryLabel('rpCalc Version {0}'.format(__version__))
-        QtCore.QTimer.singleShot(5000, self.updateEntryLabel)
+        QTimer.singleShot(5000, self.updateEntryLabel)
 
     def updateEntryLabel(self, subsText=''):
         """Set entry & status label text, use entryStr or subsText, options.
@@ -246,7 +251,7 @@ class CalcDlg(QtGui.QWidget):
         optiondlg.OptionDlgInt(self.optDlg, 'MaxHistLength',
                                'Saved history steps', CalcCore.minMaxHist,
                                CalcCore.maxMaxHist, True, 10)
-        if self.optDlg.exec_() == QtGui.QDialog.Accepted:
+        if self.optDlg.exec_() == QDialog.Accepted:
             self.calc.option.writeChanges()
             newViewReg = self.calc.option.boolData('ViewRegisters')
             if newViewReg != oldViewReg:
@@ -256,7 +261,7 @@ class CalcDlg(QtGui.QWidget):
                 else:
                     for w in self.extraLabels + self.extraLcds:
                         w.hide()
-                QtGui.qApp.processEvents()
+                qApp.processEvents()
                 self.adjustSize()
             if self.altBaseView:
                 self.altBaseView.updateOptions()
@@ -268,7 +273,7 @@ class CalcDlg(QtGui.QWidget):
         """Set lcd highlight based on option.
         """
         opt = self.calc.option.boolData('HideLcdHighlight') and \
-              QtGui.QLCDNumber.Flat or QtGui.QLCDNumber.Filled
+              QLCDNumber.Flat or QLCDNumber.Filled
         self.lcd.setSegmentStyle(opt)
         for lcd in self.extraLcds:
             lcd.setSegmentStyle(opt)
@@ -278,22 +283,22 @@ class CalcDlg(QtGui.QWidget):
         """
         if self.calc.option.boolData('UseDefaultColors'):
             return
-        pal = QtGui.QApplication.palette()
-        background = QtGui.QColor(self.calc.option.intData('BackgroundR',
+        pal = QApplication.palette()
+        background = QColor(self.calc.option.intData('BackgroundR',
                                                            0, 255),
                                   self.calc.option.intData('BackgroundG',
                                                            0, 255),
                                   self.calc.option.intData('BackgroundB',
                                                            0, 255))
-        foreground = QtGui.QColor(self.calc.option.intData('ForegroundR',
+        foreground = QColor(self.calc.option.intData('ForegroundR',
                                                            0, 255),
                                   self.calc.option.intData('ForegroundG',
                                                            0, 255),
                                   self.calc.option.intData('ForegroundB',
                                                            0, 255))
-        pal.setColor(QtGui.QPalette.Base, background)
-        pal.setColor(QtGui.QPalette.Text, foreground)
-        QtGui.QApplication.setPalette(pal)
+        pal.setColor(QPalette.Base, background)
+        pal.setColor(QPalette.Text, foreground)
+        QApplication.setPalette(pal)
 
     def viewExtra(self, defaultTab=0):
         """Show extra data view.
@@ -381,7 +386,7 @@ class CalcDlg(QtGui.QWidget):
         if not self.helpView:
             path = self.findHelpFile()
             if not path:
-                QtGui.QMessageBox.warning(self, 'rpCalc',
+                QMessageBox.warning(self, 'rpCalc',
                                           'Read Me file not found')
                 return
             self.helpView = helpview.HelpView(path, 'rpCalc README File',
@@ -391,7 +396,7 @@ class CalcDlg(QtGui.QWidget):
     def about(self):
         """About this program.
         """
-        QtGui.QMessageBox.about(self, 'rpCalc',
+        QMessageBox.about(self, 'rpCalc',
                                 'rpCalc, Version {0}\n by {1}'.
                                 format(__version__, __author__))
 
@@ -467,7 +472,7 @@ class CalcDlg(QtGui.QWidget):
                 button.tmpDown(300)
                 self.entryStr = ''
             else:
-                QtGui.QApplication.beep()
+                QApplication.beep()
         elif ch == ':' and not self.entryStr:
             self.entryStr = ':'   # optional command prefix
         else:
@@ -484,7 +489,7 @@ class CalcDlg(QtGui.QWidget):
                     key.startswith(newStr.lstrip(':'))]:
                     self.entryStr += ch
                 else:
-                    QtGui.QApplication.beep()
+                    QApplication.beep()
                     return False
         self.updateEntryLabel()
         return True
@@ -498,7 +503,7 @@ class CalcDlg(QtGui.QWidget):
             button.setDown(True)
             return
         letter = str(keyEvent.text()).upper()
-        if keyEvent.modifiers() == QtCore.Qt.AltModifier:
+        if keyEvent.modifiers() == Qt.AltModifier:
             if self.altBaseView and self.altBaseView.isVisible():
                 if letter in ('X', 'O', 'B', 'D'):
                     self.altBaseView.setCodedBase(letter, False)
@@ -515,14 +520,14 @@ class CalcDlg(QtGui.QWidget):
                 self.calc.flag == Mode.entryMode and \
                 letter in ('X', 'O', 'B', 'D'):
             self.altBaseView.setCodedBase(letter, True)
-        elif not self.entryStr and keyEvent.key() == QtCore.Qt.Key_Backspace:
+        elif not self.entryStr and keyEvent.key() == Qt.Key_Backspace:
             button = self.cmdDict['<-']
             button.clickEvent()
             button.tmpDown(300)
-        elif not self.entryStr and keyEvent.key() == QtCore.Qt.Key_Escape:
-            self.popupMenu.popup(self.mapToGlobal(QtCore.QPoint(0, 0)))
+        elif not self.entryStr and keyEvent.key() == Qt.Key_Escape:
+            self.popupMenu.popup(self.mapToGlobal(QPoint(0, 0)))
         elif not self.textEntry(str(keyEvent.text())):
-            QtGui.QWidget.keyPressEvent(self, keyEvent)
+            QWidget.keyPressEvent(self, keyEvent)
 
     def keyReleaseEvent(self, keyEvent):
         """Event handler for keys - sets button back to raised position.
@@ -554,4 +559,4 @@ class CalcDlg(QtGui.QWidget):
             self.calc.option.changeData('AltBaseYPos',
                                         self.altBaseView.y(), True)
         self.calc.option.writeChanges()
-        QtGui.QWidget.closeEvent(self, event)
+        QWidget.closeEvent(self, event)

@@ -4,7 +4,7 @@
 # extradisplay.py, provides display windows for extra data
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2017, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -12,14 +12,18 @@
 # but WITTHOUT ANY WARRANTY.  See the included LICENSE file for details.
 #*****************************************************************************
 
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QClipboard
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QListView, QPushButton,
+                             QTabWidget, QTreeWidget, QTreeWidgetItem,
+                             QVBoxLayout, QWidget)
 
 
-class ExtraViewWidget(QtGui.QTreeWidget):
+class ExtraViewWidget(QTreeWidget):
     """Base class of list views for ExtraDisplay.
     """
     def __init__(self, calcRef, parent=None):
-        QtGui.QListView.__init__(self, parent)
+        QListView.__init__(self, parent)
         self.calcRef = calcRef
         self.setRootIsDecorated(False)
 
@@ -37,11 +41,11 @@ class RegViewWidget(ExtraViewWidget):
         ExtraViewWidget.__init__(self, calcRef, parent)
         self.setHeadings(['Name', 'Value'])
         for text in ['T', 'Y', 'Z', 'X']:
-            item = QtGui.QTreeWidgetItem(self)
+            item = QTreeWidgetItem(self)
             item.setText(0, text)
-            item.setTextAlignment(0, QtCore.Qt.AlignCenter)
+            item.setTextAlignment(0, Qt.AlignCenter)
         self.resizeColumnToContents(0)
-        self.setItemSelected(item, True)
+        self.setCurrentItem(item)
         self.updateData()
 
     def updateData(self):
@@ -77,13 +81,13 @@ class HistViewWidget(ExtraViewWidget):
                                              self.calcRef.minMaxHist,
                                              self.calcRef.maxMaxHist)
         for eqn, value in self.calcRef.history[-self.calcRef.histChg:]:
-            item = QtGui.QTreeWidgetItem(self,
+            item = QTreeWidgetItem(self,
                                          [eqn, self.calcRef.formatNum(value)])
             if self.topLevelItemCount() > maxLen:
                 self.takeTopLevelItem(0)
         self.resizeColumnToContents(0)
         self.clearSelection()
-        self.setItemSelected(item, True)
+        self.setCurrentItem(item)
         self.scrollToItem(item)
         self.calcRef.histChg = 0
 
@@ -103,11 +107,11 @@ class MemViewWidget(ExtraViewWidget):
         ExtraViewWidget.__init__(self, calcRef, parent)
         self.setHeadings(['Num', 'Value'])
         for num in range(10):
-            item = QtGui.QTreeWidgetItem(self)
+            item = QTreeWidgetItem(self)
             item.setText(0, repr(num))
-            item.setTextAlignment(0, QtCore.Qt.AlignCenter)
+            item.setTextAlignment(0, Qt.AlignCenter)
         self.resizeColumnToContents(0)
-        self.setItemSelected(self.topLevelItem(0), True)
+        self.setCurrentItem(self.topLevelItem(0))
         self.updateData()
 
     def updateData(self):
@@ -126,17 +130,17 @@ class MemViewWidget(ExtraViewWidget):
         return 0.0
 
 
-class ExtraDisplay(QtGui.QWidget):
+class ExtraDisplay(QWidget):
     """Displays registers, history or memory values, allows copies.
     """
     def __init__(self, dlgRef, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.dlgRef = dlgRef
-        self.setAttribute(QtCore.Qt.WA_QuitOnClose, False)
+        self.setAttribute(Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Extra Data')
-        topLay = QtGui.QVBoxLayout(self)
+        topLay = QVBoxLayout(self)
         self.setLayout(topLay)
-        self.tab = QtGui.QTabWidget()
+        self.tab = QTabWidget()
         self.regView = RegViewWidget(dlgRef.calc)
         self.tab.addTab(self.regView, '&Registers')
         self.histView = HistViewWidget(dlgRef.calc)
@@ -146,19 +150,19 @@ class ExtraDisplay(QtGui.QWidget):
         self.tab.setFocus()
         topLay.addWidget(self.tab)
         self.tab.currentChanged.connect(self.tabUpdate)
-        buttonLay = QtGui.QHBoxLayout()
+        buttonLay = QHBoxLayout()
         topLay.addLayout(buttonLay)
-        setButton = QtGui.QPushButton('&Set\nCalc X')
+        setButton = QPushButton('&Set\nCalc X')
         buttonLay.addWidget(setButton)
         setButton.clicked.connect(self.setXValue)
-        allCopyButton = QtGui.QPushButton('Copy\n&Precise')
+        allCopyButton = QPushButton('Copy\n&Precise')
         buttonLay.addWidget(allCopyButton)
         allCopyButton.clicked.connect(self.copyAllValue)
-        fixedCopyButton = QtGui.QPushButton('Copy\n&Fixed')
+        fixedCopyButton = QPushButton('Copy\n&Fixed')
         buttonLay.addWidget(fixedCopyButton)
         fixedCopyButton.clicked.connect(self.copyFixedValue)
         self.buttonList = [setButton, allCopyButton, fixedCopyButton]
-        closeButton = QtGui.QPushButton('&Close')
+        closeButton = QPushButton('&Close')
         topLay.addWidget(closeButton)
         closeButton.clicked.connect(self.close)
         self.enableControls()
@@ -210,23 +214,23 @@ class ExtraDisplay(QtGui.QWidget):
     def copyToClip(self, text):
         """Copy text to the clipboard.
         """
-        clip = QtGui.QApplication.clipboard()
+        clip = QApplication.clipboard()
         if clip.supportsSelection():
-            clip.setText(text, QtGui.QClipboard.Selection)
+            clip.setText(text, QClipboard.Selection)
         clip.setText(text)
 
     def keyPressEvent(self, keyEvent):
         """Pass most keypresses to main dialog.
         """
-        if keyEvent.modifiers == QtCore.Qt.AltModifier:
-            QtGui.QWidget.keyPressEvent(self, keyEvent)
+        if keyEvent.modifiers == Qt.AltModifier:
+            QWidget.keyPressEvent(self, keyEvent)
         else:
             self.dlgRef.keyPressEvent(keyEvent)
 
     def keyReleaseEvent(self, keyEvent):
         """Pass most key releases to main dialog.
         """
-        if keyEvent.modifiers == QtCore.Qt.AltModifier:
-            QtGui.QWidget.keyReleaseEvent(self, keyEvent)
+        if keyEvent.modifiers == Qt.AltModifier:
+            QWidget.keyReleaseEvent(self, keyEvent)
         else:
             self.dlgRef.keyReleaseEvent(keyEvent)

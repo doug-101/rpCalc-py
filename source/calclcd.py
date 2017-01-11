@@ -4,7 +4,7 @@
 # calclcd.py, provides an LCD display
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2017, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -12,18 +12,19 @@
 # but WITTHOUT ANY WARRANTY.  See the included LICENSE file for details.
 #*****************************************************************************
 
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtCore import (QSize, Qt)
+from PyQt5.QtWidgets import (QFrame, QLCDNumber)
 
 
-class Lcd(QtGui.QLCDNumber):
+class Lcd(QLCDNumber):
     """Main LCD Display.
     """
     def __init__(self, sizeFactor=1, numDigits=8, parent=None):
-        QtGui.QLCDNumber.__init__(self, numDigits, parent)
+        QLCDNumber.__init__(self, numDigits, parent)
         self.sizeFactor = sizeFactor
-        self.setSegmentStyle(QtGui.QLCDNumber.Filled)
+        self.setSegmentStyle(QLCDNumber.Filled)
         self.setMinimumSize(10, 23)
-        self.setFrameStyle(QtGui.QFrame.NoFrame)
+        self.setFrameStyle(QFrame.NoFrame)
 
     def setDisplay(self, text, numDigits):
         """Update display value.
@@ -38,24 +39,24 @@ class Lcd(QtGui.QLCDNumber):
         """Set prefered size.
         """
         # default in Qt is 23 height & about 10 * numDigits
-        size = QtGui.QLCDNumber.sizeHint(self)
-        return QtCore.QSize(int(size.width() * self.sizeFactor),
+        size = QLCDNumber.sizeHint(self)
+        return QSize(int(size.width() * self.sizeFactor),
                             int(size.height() * self.sizeFactor))
 
 
-class LcdBox(QtGui.QFrame):
+class LcdBox(QFrame):
     """Frame for LCD display.
     """
     def __init__(self, parent=None):
-        QtGui.QFrame.__init__(self, parent)
-        self.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken)
+        QFrame.__init__(self, parent)
+        self.setFrameStyle(QFrame.Panel | QFrame.Sunken)
         self.setLineWidth(3)
  
     def mouseReleaseEvent(self, event):
         """Mouse release event for popup menus.
         """
-        if event.button() == QtCore.Qt.RightButton:
+        if event.button() == Qt.RightButton:
             popup = self.parentWidget().popupMenu
             popup.exec_(self.mapToGlobal(event.pos()))
             popup.clearFocus()
-        QtGui.QFrame.mouseReleaseEvent(self, event)
+        QFrame.mouseReleaseEvent(self, event)
