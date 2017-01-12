@@ -5,12 +5,12 @@
 
 [Setup]
 AppName=rpCalc
-AppVersion=0.7.1
+AppVersion=0.8.0
 DefaultDirName={pf}\rpCalc
 DefaultGroupName=rpCalc
 DisableProgramGroupPage=yes
 OutputDir=.
-OutputBaseFilename=rpcalc-0.7.1-install-all
+OutputBaseFilename=rpcalc-0.8.0-install-all
 PrivilegesRequired=poweruser
 SetupIconFile=rpcalc.ico
 Uninstallable=IsTaskSelected('adduninstall')
@@ -25,9 +25,11 @@ Name: "portable"; Description: "Use portable config file"; Flags: unchecked
 
 [Files]
 Source: "rpcalc.exe"; DestDir: "{app}"
-Source: "library.zip"; DestDir: "{app}"
+Source: "python35.zip"; DestDir: "{app}"
 Source: "*.dll"; DestDir: "{app}"
 Source: "*.pyd"; DestDir: "{app}"
+Source: "imageformats\*.dll"; DestDir: "{app}\imageformats"
+Source: "platforms\*.dll"; DestDir: "{app}\platforms"
 Source: "doc\*.html"; DestDir: "{app}\doc"
 Source: "doc\LICENSE"; DestDir: "{app}\doc"
 Source: "icons\*.png"; DestDir: "{app}\icons"

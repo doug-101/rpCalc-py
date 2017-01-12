@@ -36,7 +36,9 @@ setup(name = 'rpcalc',
       options = {'build_exe': {'includes': 'atexit',
                                'include_files': extraFiles,
                                'excludes': ['*.pyc'],
-                               'icon': '../win/rpcalc.ico',
+                               'zip_include_packages': ['*'],
+                               'zip_exclude_packages': [],
                                'include_msvcr': True,
-                               'build_exe': '../../rpCalc-0.7'}},
-      executables = [Executable('rpcalc.py', base=base)])
+                               'build_exe': '../../rpCalc-0.8'}},
+      executables = [Executable('rpcalc.py', base=base,
+                                icon='../win/rpcalc.ico')])

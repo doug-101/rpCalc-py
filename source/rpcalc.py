@@ -14,7 +14,7 @@
 """
 
 __progname__ = 'rpCalc'
-__version__ = '0.7.2'
+__version__ = '0.8.0'
 __author__ = 'Doug Bell'
 
 helpFilePath = None    # modified by install script if required
