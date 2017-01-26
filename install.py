@@ -219,15 +219,10 @@ def main():
     pythonBuildDir = os.path.join(buildRoot, pythonPrefixDir[1:])
 
     if os.path.isdir('source'):
-        compileall.compile_dir('source',
-                               ddir=os.path.join(prefixDir, 'source'))
         print('Installing files...')
         print('  Copying python files to {0}'.format(pythonBuildDir))
         removeDir(pythonBuildDir)         # remove old?
         copyDir('source', pythonBuildDir)
-        if os.path.isdir('source/__pycache__'):
-            copyDir('source/__pycache__',
-                    os.path.join(pythonBuildDir, '__pycache__'))
     if os.path.isdir('doc'):
         docPrefixDir = docDir.replace('<prefix>/', '')
         if not os.path.isabs(docPrefixDir):
@@ -272,6 +267,7 @@ def main():
         if not os.path.isdir(binBuildDir):
             os.makedirs(binBuildDir)
         shutil.copy2(progName, binBuildDir)
+        compileall.compile_dir(pythonBuildDir, ddir=prefixDir)
         cleanSource()
         print('Install complete.')
 
