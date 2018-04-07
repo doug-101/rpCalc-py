@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.1
+Name=rpCalc
+GenericName=Unit Converter
+Comment=a RPN calculator
+Exec=rpcalc
+Icon=rpcalc-icon
+StartupNotify=true
+Terminal=false
+Categories=Math;Science;Education
