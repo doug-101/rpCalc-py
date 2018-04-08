@@ -74,8 +74,8 @@ def main():
     removeAll(os.path.join(prefixDir, 'share', 'doc', progName))
     removeAll(os.path.join(prefixDir, 'share', progName))
     removeAll(os.path.join(prefixDir, 'share', 'icons', progName))
-    removeAll(os.path.join(prefixDir, 'share', 'icons', 'hicolor', '32x32',
-                           'apps', progName + '-icon.png'))
+    removeAll(os.path.join(prefixDir, 'share', 'icons', 'hicolor', 'scalable',
+                           'apps', progName + '-icon.svg'))
     removeAll(os.path.join(prefixDir, 'share', 'applications',
                            progName + '.desktop'))
     removeAll(os.path.join(prefixDir, 'bin', progName))
