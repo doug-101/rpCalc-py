@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="default.css" />
+
+    <title>rpCalc - How to Use</title>
+</head>
+
+<body>
+
+    <div class="interior">
+
+        <div class="title">
+            <img src="logo.png" alt="rpCalc" />
+        </div>
+
+        <div class="toplinks">
+            <p>Version 0.8.2<p>
+            <p><a href="http://www.bellz.org/progs.html">Other Programs</a></p>
+            <p><a href="http://www.bellz.org/contact.html">Contact Info</a></p>
+        </div>
+
+        <div class="navigation">
+            <a href="index.html">Home&nbsp;/&nbsp;News</a>
+            <a href="feature.html">Features</a>
+            <a href="scrnsht.html">Screenshots</a>
+            <a href="require.html">Requirements</a>
+            <a href="download.html">Downloads</a>
+            <a href="install.html">Installation</a>
+            <span class="current-nav">How&nbsp;to&nbsp;Use</span>
+        </div>
+
+        <div class="content">
+
+            <h1>How to Use rpCalc</h1>
+
+            <h2>Contents</h2>
+
+            <ul><li><a href="#basics">Basics</a></li>
+              <li><a href="#info-win">Information Windows</a></li>
+              <li><a href="#alt-base">Alternate Bases</a></li>
+              <li><a href="#option">Options</a></li>
+            </ul>
+
+            <h2><a name="basics"></a>Basics</h2>
+
+            <p>If you know how to use an RPN calculator (like some
+            Hewlett-Packard models), you know how to use rpCalc.  It stores
+            previous results in four registers (usually labeled X, Y, Z and T),
+            and the numbers are entered before the operators.</p>
+
+            <p>The quickest way to enter numbers and the four basic operators is
+            to use the number pad on the keyboard.  For the other keys, the name
+            on the key can be typed (not case-sensitive).  What has been typed
+            shows in the box below the keys.  The tab key may be used to
+            automatically complete a partially typed command.  Of course, the
+            mouse may also be used to hit any key.</p>
+
+            <p>A few keys have unusual labels to allow them to be typed:  "RCIP"
+            is 1/X, "tn^X" is 10^X, "R&lt;" rolls the stack back (or down),
+            "R&gt;" rolls the stack forward (or up), "x&lt;&gt;y" is exchange,
+            "CLR" clears the registers, and "&lt;-" is backspace.</p>
+
+            <p>A few commands ("STO", "RCL" and "PLCS") prompt for a number from
+            zero through nine.  This number will be the memory register number
+            or the number of decimal places for the display.</p>
+
+            <h2><a name="info-win"></a>Information Windows</h2>
+
+            <p>A menu can be displayed by hitting the Esc key or by clicking on
+            the main number (LCD) display with the right mouse button.  This
+            menu includes commands to display a list of registers, a calculation
+            history list, and a memory contents list.  These commands will show
+            a new window with the requested information.  The extra window is
+            tabbed to toggle between the three lists.  Buttons on the window can
+            be used to copy the numbers to the calculator (X-register) or to the
+            clipboard (with buttons to copy either all decimal places or the
+            formatted fixed decimal place number).</p>
+
+            <p>The register list shows the current contents of each register (X,
+            Y, Z and T).  The numbers are shown to full precision, with all
+            available decimal places shown.</p>
+
+            <p>The history list shows algebraic equations for every calculation
+            that was done in the current rpCalc session.  The numbers are shown
+            to the same precision as the main display.</p>
+
+            <p>The memory list shows the current contents of the ten memory
+            registers (0-9).  The numbers are shown to the same precision as the
+            main display.</p>
+
+            <h2><a name="alt-base"></a>Alternate Bases</h2>
+
+            <p>An alternate base window can be shown from the display context
+            menu (right-click the LCD or hit the Esc key).  This window shows
+            the hexadecimal, octal and binary equivalents of the number in the
+            X-register, rounded to the nearest integer.</p>
+
+            <p>The Hex, Octal, Binary and Decimal buttons are used to change the
+            input mode to that base.  There are also keyboard shortcuts (Alt-x,
+            Alt-o, Alt-b and Alt-d) that do the same thing.  Any typed number is
+            then interpreted using the current base.  The current mode is kept
+            until the user changes it.</p>
+
+            <p>Prefixes consisting of a zero followed by the base code (x, o, b
+            or d) can be used to temporarily change the input mode.  For
+            example, "0x56c" enters the hex number 56c (1388 in decimal).  The
+            input mode goes back to decimal after hitting enter or using a
+            function.  Note that the alternate base window must be displayed for
+            these prefixes to function.</p>
+
+            <p>When using non-decimal input modes, the decimal equivalent of the
+            entry is still displayed on the main LCD.  Also, when in hex input
+            mode, commands beginning with letters A-F can only be typed if a
+            colon (":") is used as a command prefix.</p>
+
+            <p>There is also a Copy Value button that copies the value of the
+            current input mode base to the clipboard for use in other
+            applications.</p>
+
+            <p>The option dialog has a setting for a limit on the number of
+            bits.  Numbers larger than the limit will display "overflow" in the
+            alternate base window.  There is also a setting to show negative
+            numbers as a two's complement number.</p>
+
+            <h2><a name="option"></a>Options</h2>
+
+            <p>The OPT key will show an options dialog box.  This includes
+            settings for startup conditions, display parameters, angle units,
+            alternate bases and extra views.</p>
+
+            <p>The startup options include whether to save the register entries
+            between sessions and whether to open the extra data or alternate
+            base windows when starting rpCalc.</p>
+
+            <p>The display options include several number formatting settings.
+            The number of decimal places, use of space as a thousands separator
+            and various exponent and engineering notation (exponents divisible
+            by three) options can be set.  There are also settings for viewing
+            all four RPN registers on the main display and for hiding the LCD
+            highlight (clearer for some resolution and window size
+            settings).</p>
+
+            <p>The extra views section includes buttons for showing the extra
+            data window, the alternate base window, and this readme file.  The
+            number of saved equations in the history list can also be set.</p>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="default.css" />
+
+    <title>rpCalc - News</title>
+</head>
+
+<body>
+
+    <div class="interior">
+
+        <div class="title">
+            <img src="logo.png" alt="rpCalc" />
+        </div>
+
+        <div class="toplinks">
+            <p>Version 0.8.2<p>
+            <p><a href="http://www.bellz.org/progs.html">Other Programs</a></p>
+            <p><a href="http://www.bellz.org/contact.html">Contact Info</a></p>
+        </div>
+
+        <div class="navigation">
+            <span class="current-nav">Home&nbsp;/&nbsp;News</span>
+            <a href="feature.html">Features</a>
+            <a href="scrnsht.html">Screenshots</a>
+            <a href="require.html">Requirements</a>
+            <a href="download.html">Downloads</a>
+            <a href="install.html">Installation</a>
+            <a href="use.html">How&nbsp;to&nbsp;Use</a>
+        </div>
+
+        <div class="content">
+
+            <h1>What is rpCalc?</h1>
+
+            <p>rpCalc started out as a little program written to try out
+            various Python GUI toolkits.  But I ended up using it all the time
+            (it's much quicker to pull it up than to pull an actual HP
+            calculator out of the desk), and I made several improvements.  So I
+            decided to make it available to others who also like RPN
+            calculators.</p>
+
+            <h1>News</h1>
+
+            <h2>April 8, 2018 - Release 0.8.2</h2>
+
+            <ul><b>Updates:</b>
+
+              <li>Added a desktop file to the Linux version to provide menu
+                entries.</li>
+
+              <li>Built the Windows version with an updated version of the GUI
+                library.</li>
+
+            </ul>
+
+            <h2>February 4, 2017 - Release 0.8.1 (Linux only)</h2>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Replaced outdated dependency checks in the Linux installer -
+                it now runs checks for Qt5 libraries.</li>
+
+              <li>Fixed a timing issue in the Linux installer so that
+                byte-compiled files do not have old timestamps.</li>
+
+            </ul>
+
+            <h2>January 15, 2017 - Release 0.8.0</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>rpCalc has been ported from the Qt4 to the Qt5 library.</li>
+
+            </ul>
+
+            <h2>December 6, 2015 - Release 0.7.1</h2>
+
+            <ul><b>Updates:</b>
+
+              <li>Clarified some dependency checker error messages in the
+              Linux installer.</li>
+
+              <li>Added some MSVC runtime DLL files to the Windows installers
+              to avoid problems on PCs that do not already have them.</li>
+
+            </ul>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Fixed problems responding to some keyboard presses when the
+              shift key is used on Windows.</li>
+
+            </ul>
+
+
+            <h2>January 26, 2014 - Release 0.7.0</h2>
+
+            <ul><b>Updates:</b>
+
+              <li>rpCalc has been ported from Python 2 to Python 3.  This
+              porting includes some code cleanup.</li>
+
+              <li>The Windows binaries are built using more recent Python, Qt
+              and PyQt libraries.</li>
+
+              <li>There is an additional Windows installer for users without
+              administrator rights and for portable installations.</li>
+
+              <li>Added an installer option to add a config file to the
+              program's directory for portable installations.  If that file is
+              present, no config files will be written to users'
+              directories.</li>
+
+            </ul>
+
+            <h2>October 14, 2008 - Release 0.6.0</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>A new base conversion dialog was added.  It shows values in
+              hexadecimal, octal and binary bases.  Push buttons or keyboard
+              prefixes can be used to allow entry of a value in one of these
+              bases.</li>
+
+              <li>A colon (":") can optionally be used as a prefix when typing
+              commands.  This is useful in hexadecimal entry mode for commands
+              starting with letters "A" through "F".</li>
+
+              <li>New options have been added for alternate base conversions.
+              The number of bits and whether to use two's complement for
+              negative numbers can be set.</li>
+
+              <li>A display option was added to separate thousands with spaces
+              in the main "LCD".</li>
+
+              <li>An engineering notation display option was added that only
+              shows exponents that are divisible by three.</li>
+
+            </ul>
+
+            <ul><b>Updates:</b>
+
+              <li>Keyboard number and function entry continue to work when the
+              Extra Data window has focus.</li>
+
+              <li>The ReadMe file has been updated.</li>
+
+            </ul>
+
+            <h2>October 3, 2006 - Release 0.5.0</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>rpCalc was ported to the Qt4 library. This involved a
+              significant rewrite of the code.  The previous versions used
+              Qt3.x on Linux and Qt2.3 on Windows.  Benefits include
+              updated widgets and removal of the non-commercial license
+              exception in Windows.</li>
+
+            </ul>
+
+            <ul><b>Updates:</b>
+
+              <li>On Windows, the rpCalc.ini file has been moved from the
+              installation directory to a location under the "Documents
+              and Settings" folder.  This avoids problems on multi-user
+              systems and for users with limited access rights.</li>
+
+            </ul>
+
+            <h2>March 12, 2004 - Release 0.4.3</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>The size and position of the main and extra windows are
+              now saved at exit.</li>
+
+              <li>An install program has been added for windows.</li>
+
+            </ul>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Fixed Linux install script problems with certain versions
+              of Python.</li>
+
+            </ul>
+
+            <h2>November 17, 2003 - Release 0.4.2</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>Allow the use of commas in addition to periods as decimal
+              points to accomodate European keyboards.</li>
+
+            </ul>
+
+            <ul><b>Updates:</b>
+
+              <li>An install script was added for Linux and Unix systems.</li>
+
+              <li>The windows build now uses Python version 2.3 and PyQt
+              version 3.8.</li>
+
+            </ul>
+
+            <h2>July 14, 2003 - Release 0.4.1</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>Added an option to remove the LCD display highlight.
+              This is useful for smaller displays</li>
+
+            </ul>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Fixed a problem with the option to display the
+              extra data view on startup.</li>
+              
+            </ul>
+
+            <h2>April 30, 2003 - Release 0.4.0</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>The main display can optionally be expanded to
+              show lines for the Y, Z, &amp; T registers.</li>
+
+              <li>The three separate views for extra data
+              (registers, history &amp; memory) have been replaced
+              with a single tabbed view.</li>
+
+            </ul>
+
+            <ul><b>Updates:</b>
+
+              <li>Icon files are now provided with the distributed
+              files.</li>
+
+            </ul>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Crashes caused by some calculation overflows
+              have been fixed.</li>
+
+            </ul>
+
+            <h2>February 27, 2003 - Release 0.3.0</h2>
+
+            <ul><b>New Features:</b>
+
+              <li>The typing of multiple-letter command names has been made
+              easier.  The return key is no longer needed to finish a
+              command, and hitting the tab key auto-completes a partial
+              command.</li>
+
+              <li>Since it is no longer needed for entering commands, the
+              return key is now equivalent to the enter key.</li>
+
+              <li>New keys have been added for setting display and angle
+              options.  "PLCS" prompts for the number of decimal places,
+              "SCI" toggles between fixed and scientific display, and "DEG"
+              toggles between degree and radian settings.  There is also a
+              new status indicator in the lower right corner for these
+              options.</li>
+
+              <li>A new "SHOW" key temporarily toggles to a scientific
+              display showing 12 significant figures.  The display goes
+              back to normal after the next command or if the "SHOW"
+              command is repeated.</li>
+
+            </ul>
+
+            <h2>May 28, 2002 - Release 0.2.2a</h2>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>A fix of the Windows binary only.  Fixes major problems by
+              upgrading the library version to PyQt 3.2.4.</li>
+
+            </ul>
+
+            <h2>May 16, 2002 - Release 0.2.2</h2>
+
+            <ul><b>Updates:</b>
+
+              <li>rpCalc has been ported to Qt 3.  It now works with
+              both Qt 2.x and 3.x using the same source code.</li>
+
+              <li>The help/readme file has been rewritten and now
+              includes section links.</li>
+
+              <li>The binaries for windows have been updated to Python
+              2.2 and PyQt 3.2 (but are still using Qt 2.3
+              Non-commercial).</li>
+
+            </ul>
+
+            <h2>March 19, 2002 - Website Update</h2>
+
+            <ul>This website now looks a little better.  Hopefully, it's
+              more user-friendly, too.</ul>
+
+            <ul>Stay tuned - I'll soon be porting these programs to use
+              PyQt with Qt 3.0.</ul>
+
+            <h2>September 8, 2001 - Release 0.2.1</h2>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Fixed a problem with extra views not always updating
+              properly.</li>
+
+              <li>Fixed copying to the clipboard from the history
+              view.</li>
+
+            </ul>
+
+            <h2>August 30, 2001 - Release 0.2.0</h2>
+
+            <ul><b>New features:</b>
+
+              <li>Extra views listing registers, calculation history and
+              memory values were added.</li>
+
+              <li>A popup menu was added to the display.</li>
+
+            </ul>
+
+            <ul><b>Updates:</b>
+
+              <li>Improved error handling.</li>
+
+            </ul>
+
+            <h2>August 20, 2001 - Release 0.1.2</h2>
+
+            <ul><b>Updates:</b>
+
+              <li>The name was changed to rpCalc to avoid conflicts.</li>
+
+              <li>For MS Windows users, the binary files were upgraded
+              to PyQt Version 2.5.</li>
+
+            </ul>
+
+            <ul><b>Bug Fixes:</b>
+
+              <li>Problems with saving changed options were fixed.</li>
+
+            </ul>
+
+            <h2>August 10, 2001 - Release 0.1.1</h2>
+
+            <ul><b>New features:</b>
+
+              <li>Added a button to the OPT dialog to view the ReadMe
+              file.</li>
+
+            </ul>
+
+            <ul><b>Updates:</b>
+
+              <li>The rpcalc.ini file on windows was moved to the program
+              directory.</li>
+
+            </ul>
+
+            <h2>July 2, 2001 - Release 0.1.0</h2>
+
+            <ul>
+
+              <p>Initial release.</p>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
