@@ -4,7 +4,7 @@
 # optiondefaults.py, provides defaults for program options
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2014, Douglas W. Bell
+# Copyright (C) 2019, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -39,6 +39,7 @@ defaultList = [\
     "AltBaseStartup      no",
     "MaxHistLength       100",
     "ViewRegisters       no",
+    "KeepOnTop           no",
     "AltBaseBits         32",
     "UseTwosComplement   no",
     "#",

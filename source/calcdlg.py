@@ -4,7 +4,7 @@
 # calcdlg.py, the main dialog view
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2017, Douglas W. Bell
+# Copyright (C) 2019, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -55,12 +55,13 @@ class CalcDlg(QWidget):
             QApplication.setWindowIcon(self.icons['calc_lg'])
         except KeyError:
             pass
+        if self.calc.option.boolData('KeepOnTop'):
+            self.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
+        else:
+            self.setWindowFlags(Qt.Window)
         self.setFocusPolicy(Qt.StrongFocus)
         self.helpView = None
         self.extraView = None
-        self.regView = None
-        self.histView = None
-        self.memView = None
         self.altBaseView = None
         self.optDlg = None
         self.popupMenu = QMenu(self)
@@ -211,15 +212,16 @@ class CalcDlg(QWidget):
         """Starts option dialog, called by option key.
         """
         oldViewReg = self.calc.option.boolData('ViewRegisters')
+        oldOnTop = self.calc.option.boolData('KeepOnTop')
         self.optDlg = optiondlg.OptionDlg(self.calc.option, self)
-        self.optDlg.startGroupBox('Startup', 8)
+        self.optDlg.startGroupBox('Startup')
         optiondlg.OptionDlgBool(self.optDlg, 'SaveStacks',
                                 'Save previous entries')
         optiondlg.OptionDlgBool(self.optDlg, 'ExtraViewStartup',
                                 'Auto open extra data view')
         optiondlg.OptionDlgBool(self.optDlg, 'AltBaseStartup',
                                 'Auto open alternate base view')
-        self.optDlg.startGroupBox('Display', 8)
+        self.optDlg.startGroupBox('Display')
         optiondlg.OptionDlgInt(self.optDlg, 'NumDecimalPlaces',
                                'Number of decimal places', 0, 9)
         optiondlg.OptionDlgBool(self.optDlg, 'ThousandsSeparator',
@@ -234,16 +236,19 @@ class CalcDlg(QWidget):
                                 'View Registers on LCD')
         optiondlg.OptionDlgBool(self.optDlg, 'HideLcdHighlight',
                                 'Hide LCD highlight')
+        self.optDlg.startGroupBox('Windows')
+        optiondlg.OptionDlgBool(self.optDlg, 'KeepOnTop',
+                                'Keep windows on top',)
         self.optDlg.startNewColumn()
         optiondlg.OptionDlgRadio(self.optDlg, 'AngleUnit', 'Angular Units',
                                  [('deg', 'Degrees'), ('rad', 'Radians')])
-        self.optDlg.startGroupBox('Alternate Bases')
+        self.optDlg.startGroupBox('Alternate Bases', 10)
         optiondlg.OptionDlgInt(self.optDlg, 'AltBaseBits', 'Size limit',
                                CalcCore.minNumBits, CalcCore.maxNumBits,
                                True, 4, False, ' bits')
         optiondlg.OptionDlgBool(self.optDlg, 'UseTwosComplement',
                                 'Use two\'s complement\nnegative numbers')
-        self.optDlg.startGroupBox('Extra Views',)
+        self.optDlg.startGroupBox('Extra Views', 10)
         optiondlg.OptionDlgPush(self.optDlg, 'View Extra Data', self.viewExtra)
         optiondlg.OptionDlgPush(self.optDlg, 'View Other Bases',
                                 self.viewAltBases)
@@ -263,6 +268,18 @@ class CalcDlg(QWidget):
                         w.hide()
                 qApp.processEvents()
                 self.adjustSize()
+            newOnTop = self.calc.option.boolData('KeepOnTop')
+            if newOnTop != oldOnTop:
+                for win in (self, self.extraView, self.altBaseView):
+                    if win:
+                        shown = win.isVisible()
+                        if newOnTop:
+                            win.setWindowFlags(Qt.Window |
+                                               Qt.WindowStaysOnTopHint)
+                        else:
+                            win.setWindowFlags(Qt.Window)
+                        if shown:
+                            win.show()
             if self.altBaseView:
                 self.altBaseView.updateOptions()
             self.setLcdHighlight()

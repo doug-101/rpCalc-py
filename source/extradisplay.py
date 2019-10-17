@@ -4,7 +4,7 @@
 # extradisplay.py, provides display windows for extra data
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2017, Douglas W. Bell
+# Copyright (C) 2019, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -138,6 +138,10 @@ class ExtraDisplay(QWidget):
         self.dlgRef = dlgRef
         self.setAttribute(Qt.WA_QuitOnClose, False)
         self.setWindowTitle('rpCalc Extra Data')
+        if self.dlgRef.calc.option.boolData('KeepOnTop'):
+            self.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
+        else:
+            self.setWindowFlags(Qt.Window)
         topLay = QVBoxLayout(self)
         self.setLayout(topLay)
         self.tab = QTabWidget()
