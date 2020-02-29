@@ -4,7 +4,7 @@
 # calcdlg.py, the main dialog view
 #
 # rpCalc, an RPN calculator
-# Copyright (C) 2019, Douglas W. Bell
+# Copyright (C) 2020, Douglas W. Bell
 #
 # This is free software; you can redistribute it and/or modify it under the
 # terms of the GNU General Public License, either Version 2 or any later
@@ -14,7 +14,7 @@
 
 import sys
 import os.path
-from PyQt5.QtCore import (QPoint, QTimer, Qt)
+from PyQt5.QtCore import (QPoint, QRect, QTimer, Qt)
 from PyQt5.QtGui import (QColor, QPalette)
 from PyQt5.QtWidgets import (QApplication, QDialog, QFrame, QGridLayout,
                              QHBoxLayout, QLCDNumber, QLabel, QMenu,
@@ -187,12 +187,25 @@ class CalcDlg(QWidget):
         if self.calc.option.boolData('AltBaseStartup'):
             self.viewAltBases()
 
-        xSize = self.calc.option.intData('MainDlgXSize', 0, 10000)
-        ySize = self.calc.option.intData('MainDlgYSize', 0, 10000)
-        if xSize and ySize:
-            self.resize(xSize, ySize)
-        self.move(self.calc.option.intData('MainDlgXPos', 0, 10000),
-                  self.calc.option.intData('MainDlgYPos', 0, 10000))
+        rect = QRect(self.calc.option.intData('MainDlgXPos', 0, 10000),
+                     self.calc.option.intData('MainDlgYPos', 0, 10000),
+                     self.calc.option.intData('MainDlgXSize', 0, 10000),
+                     self.calc.option.intData('MainDlgYSize', 0, 10000))
+        if rect.isValid():
+            availRect = (QApplication.primaryScreen().
+                         availableVirtualGeometry())
+            topMargin = self.calc.option.intData('MainDlgTopMargin', 0, 1000)
+            otherMargin = self.calc.option.intData('MainDlgOtherMargin', 0,
+                                                   1000)
+            # remove frame space from available rect
+            availRect.adjust(otherMargin, topMargin,
+                             -otherMargin, -otherMargin)
+            finalRect = rect.intersected(availRect)
+            if finalRect.isEmpty():
+                rect.moveTo(0, 0)
+                finalRect = rect.intersected(availRect)
+            if finalRect.isValid():
+                self.setGeometry(finalRect)
 
         self.updateEntryLabel('rpCalc Version {0}'.format(__version__))
         QTimer.singleShot(5000, self.updateEntryLabel)
@@ -557,10 +570,17 @@ class CalcDlg(QWidget):
         """Saves the stack prior to closing.
         """
         self.calc.saveStack()
-        self.calc.option.changeData('MainDlgXSize', self.width(), True)
-        self.calc.option.changeData('MainDlgYSize', self.height(), True)
-        self.calc.option.changeData('MainDlgXPos', self.x(), True)
-        self.calc.option.changeData('MainDlgYPos', self.y(), True)
+        contentsRect = self.geometry()
+        frameRect = self.frameGeometry()
+        self.calc.option.changeData('MainDlgXSize', contentsRect.width(), True)
+        self.calc.option.changeData('MainDlgYSize', contentsRect.height(),
+                                    True)
+        self.calc.option.changeData('MainDlgXPos', contentsRect.x(), True)
+        self.calc.option.changeData('MainDlgYPos', contentsRect.y(), True)
+        self.calc.option.changeData('MainDlgTopMargin',
+                                    contentsRect.y() - frameRect.y(), True)
+        self.calc.option.changeData('MainDlgOtherMargin',
+                                    contentsRect.x() - frameRect.x(), True)
         if self.extraView:
             self.calc.option.changeData('ExtraViewXSize',
                                         self.extraView.width(), True)
